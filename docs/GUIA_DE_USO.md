@@ -10,7 +10,7 @@ forma modular:
 
 - **Storefront (VTEX IO)**: Regras para Blocks (JSONC), Frontend (React/TS) e
   Backend (Node/TS).
-- **FastStore**: Estrutura preparada para futuras implementações.
+- **FastStore**: Suporte completo para Headless CMS, Componentes e Resolvers GraphQL.
 - **Referências Oficiais**: Link direto para a documentação da VTEX.
 - **Checklists de Auto-validação**: Garantia de integridade de referências e
   performance.
@@ -28,6 +28,8 @@ forma modular:
 │   ├── perf.mdc          - Checklist de performance automatizado
 │   ├── styles.mdc        - Templates CSS e tokens
 │   └── self-healing.mdc  - Auto-correção de erros
+├── faststore/
+│   └── general.mdc       - Padrões para FastStore (CMS, UI, GraphQL)
 └── global.mdc            - Regras gerais do projeto
 ```
 
@@ -40,6 +42,8 @@ forma modular:
 ```bash
 # Copie as regras do framework desejado para a pasta .cursor/rules/ do seu projeto
 cp -r .cursor/rules/storefront/ seu-projeto/.cursor/rules/
+# OU para FastStore
+cp -r .cursor/rules/faststore/ seu-projeto/.cursor/rules/
 ```
 
 ### Passo 2: Reiniciar Cursor
@@ -61,6 +65,9 @@ automatizados.
   `react-intl` e declaração automática em `interfaces.json`.
 - **`@new-service`**: Gera serviços Node.js completos (Client, Middleware e
   Rota) seguindo a arquitetura VTEX IO.
+- **`@new-faststore-cms`**: Configura seções e tipos de conteúdo no Headless CMS.
+- **`@new-faststore-components`**: Cria componentes e overrides seguindo Atomic Design.
+- **`@new-faststore-resolvers`**: Implementa lógica GraphQL e resolvers customizados.
 
 ### Manutenção e Qualidade
 
