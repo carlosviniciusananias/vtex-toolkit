@@ -12,19 +12,19 @@ Regras de nível de projeto para automação de tarefas transversais, manutenç�
 
 Sempre que o usuário utilizar uma das palavras-chave abaixo, execute o workflow correspondente:
 
-### @new-block - Geração de Blocos JSONC
+### @new-storefront-block - Geração de Blocos JSONC
 1.  Identificar o tipo de componente (Hero, Shelf, Newsletter, etc).
 2.  Aplicar o workflow definido em `storefront/blocks.mdc`.
 3.  Garantir encapsulamento em `flex-layout.row` e `flex-layout.col`.
 4.  Validar integridade de referências (#) e performance (preload, fold).
 
-### @new-component - Geração de Componente React
+### @new-storefront-component - Geração de Componente React
 1.  Seguir a estrutura de pastas e exportação definida em `storefront/frontend.mdc`.
 2.  Utilizar `useCssHandles`, `react-intl` e a tipagem `StoreFrontFC`.
 3.  Gerar automaticamente a declaração em `store/interfaces.json`.
 4.  Basear-se no exemplo real em `examples/storefront/custom-components/`.
 
-### @new-service - Geração de Serviço Node.js (Full Stack)
+### @new-storefront-service - Geração de Serviço Node.js (Full Stack)
 1.  **Client**: Criar o Client (Janus ou External) em `node/clients/`.
 2.  **Middleware**: Criar o middleware com lógica de consumo em `node/middlewares/`.
 3.  **Rota**: Definir a rota (path e visibilidade) em `node/service.json`.
