@@ -59,11 +59,11 @@ automatizados.
 
 ### Geração de Código
 
-- **`@new-block`**: Gera blocos JSONC (Hero, Shelf, Newsletter, etc) seguindo
+- **`@new-storefront-block`**: Gera blocos JSONC (Hero, Shelf, Newsletter, etc) seguindo
   padrões de performance e acessibilidade.
-- **`@new-component`**: Cria componentes React customizados com `useCssHandles`,
+- **`@new-storefront-component`**: Cria componentes React customizados com `useCssHandles`,
   `react-intl` e declaração automática em `interfaces.json`.
-- **`@new-service`**: Gera serviços Node.js completos (Client, Middleware e
+- **`@new-storefront-service`**: Gera serviços Node.js completos (Client, Middleware e
   Rota) seguindo a arquitetura VTEX IO.
 - **`@new-faststore-cms`**: Configura seções e tipos de conteúdo no Headless CMS.
 - **`@new-faststore-components`**: Cria componentes e overrides seguindo Atomic Design.
