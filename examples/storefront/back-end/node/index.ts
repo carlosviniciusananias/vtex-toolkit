@@ -9,6 +9,7 @@ import { LRUCache, Service, method } from '@vtex/api'
 import { Clients } from './clients'
 import { addAttachment } from './middlewares/attachments'
 import { getPricingMiddleware } from './middlewares/pricing'
+import { queries, mutations } from './resolvers'
 
 const TIMEOUT_MS = 800
 
@@ -40,6 +41,16 @@ declare global {
 // Export a service that defines route handlers and client options.
 export default new Service({
   clients,
+  graphql: {
+    resolvers: {
+      Query: {
+        ...queries,
+      },
+      Mutation: {
+        ...mutations,
+      },
+    },
+  },
   routes: {
     attachments: method({
       POST: [addAttachment],

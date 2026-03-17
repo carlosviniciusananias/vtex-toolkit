@@ -8,6 +8,13 @@ alwaysApply: true
 
 Regras de nível de projeto para automação de tarefas transversais, manutenção de padrões e geração de código.
 
+## Restrições de Escopo (CRÍTICO)
+
+- **NUNCA** crie ou modifique arquivos dentro das pastas `.cursor/` ou `examples/`.
+- **NUNCA** altere a configuração do toolkit ou suas regras internas.
+- Todas as implementações devem ser realizadas exclusivamente nas pastas de código do projeto do usuário (ex: `react/`, `node/`, `store/`, `src/`, `cms/`).
+- Os arquivos na pasta `examples/` servem **APENAS** como referência de leitura e nunca devem ser editados.
+
 ## Comandos Ativos de Geração
 
 Sempre que o usuário utilizar uma das palavras-chave abaixo, execute o workflow correspondente:
@@ -25,27 +32,32 @@ Sempre que o usuário utilizar uma das palavras-chave abaixo, execute o workflow
 4.  Basear-se no exemplo real em `examples/storefront/custom-components/`.
 
 ### @new-storefront-service - Geração de Serviço Node.js (Full Stack)
-1.  **Client**: Criar o Client (Janus ou External) em `node/clients/`.
-2.  **Middleware**: Criar o middleware com lógica de consumo em `node/middlewares/`.
-3.  **Rota**: Definir a rota (path e visibilidade) em `node/service.json`.
-4.  **Orquestração**: Registrar o client em `node/clients/index.ts` e associar o middleware à rota em `node/index.ts`.
-5.  Basear-se nos exemplos reais em `examples/storefront/node-services/`.
+1.  **Consulta (Opcional)**: Consultar a documentação oficial da API VTEX em `developers.vtex.com` utilizando a skill `vtex-api-consultant`.
+2.  **Client**: Criar o Client (Janus ou External) em `node/clients/`.
+3.  **Middleware**: Criar o middleware com lógica de consumo em `node/middlewares/`.
+4.  **Resolvers (GraphQL)**: Se necessário, criar resolvers em `node/resolvers/` e exportar centralizadamente no `index.ts` da pasta.
+5.  **Rota**: Definir a rota (path e visibilidade) em `node/service.json`.
+6.  **Orquestração**: Registrar o client em `node/clients/index.ts`, associar o middleware à rota e/ou registrar os resolvers no `graphql` do `Service` em `node/index.ts`.
+7.  Basear-se nos exemplos reais em `examples/storefront/back-end/node/`.
 
 ### @new-faststore-cms - Geração de Configuração CMS
-1.  **Localização**: Pasta `/cms` na raiz.
-2.  **Arquivos**: `content-types.json` e `sections.json`.
-3.  **Referências**: `examples/faststore/cms/`.
+1.  **Consulta (Opcional)**: Consultar as melhores práticas de CMS na documentação oficial utilizando a skill `faststore-consultant`.
+2.  **Localização**: Pasta `/cms` na raiz.
+3.  **Arquivos**: `content-types.json` e `sections.json`.
+4.  **Referências**: `examples/faststore/cms/`.
 
 ### @new-faststore-components - Geração de Componentes/Overrides
-1.  **Padrão**: Atomic Design em `src/components/`.
-2.  **Overrides**: Em `src/components/overrides/` usando `SectionOverride`.
-3.  **Exportação**: Registrar em `src/components/index.tsx`.
-4.  **Referências**: `examples/faststore/src/components/`.
+1.  **Consulta (Opcional)**: Consultar as melhores práticas de componentes e features na documentação oficial utilizando a skill `faststore-consultant`.
+2.  **Padrão**: Atomic Design em `src/components/`.
+3.  **Overrides**: Em `src/components/overrides/` usando `SectionOverride`.
+4.  **Exportação**: Registrar em `src/components/index.tsx`.
+5.  **Referências**: `examples/faststore/src/components/`.
 
 ### @new-faststore-resolvers - Geração de Lógica GraphQL
-1.  **Estrutura**: Fragments, Resolvers e TypeDefs em `src/`.
-2.  **Registro**: Resolvers devem ser registrados no `index.ts` da pasta.
-3.  **Referências**: `examples/faststore/src/graphql/` e `src/fragments/`.
+1.  **Consulta (Opcional)**: Consultar as melhores práticas de GraphQL na documentação oficial utilizando a skill `faststore-consultant`.
+2.  **Estrutura**: Fragments, Resolvers e TypeDefs em `src/`.
+3.  **Registro**: Resolvers devem ser registrados no `index.ts` da pasta.
+4.  **Referências**: `examples/faststore/src/graphql/` e `src/fragments/`.
 
 ## Comandos de Manutenção
 

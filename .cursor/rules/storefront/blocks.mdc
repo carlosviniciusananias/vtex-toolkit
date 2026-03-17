@@ -8,6 +8,11 @@ alwaysApply: true
 
 Diretivas operacionais para garantir integridade, performance e modularidade na geração de blocos.
 
+## Restrições de Escopo e Destino
+
+- **Destino Obrigatório**: Todas as implementações devem ser criadas exclusivamente na pasta `store/` da raiz do projeto do usuário.
+- **Isolamento de Exemplos**: Utilize os arquivos em `examples/` apenas para consulta. **NUNCA** modifique arquivos dentro de `examples/`.
+
 ## Workflow de Geração (@new-block)
 
 Sempre que o comando `@new-block` for ativado ou a intenção de criar um bloco for identificada, siga rigorosamente estes passos:
