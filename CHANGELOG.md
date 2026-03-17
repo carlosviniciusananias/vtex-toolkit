@@ -19,3 +19,4 @@ and this project adheres to
   `@new-faststore-components`, and `@new-faststore-resolvers`.
 - Example files for FastStore CMS, components, and GraphQL.
 - Global workflows section in README.
+- Updated `GUIA_DE_USO.md` with FastStore instructions and workflows.
