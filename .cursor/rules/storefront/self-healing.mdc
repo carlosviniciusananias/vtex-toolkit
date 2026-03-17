@@ -8,6 +8,11 @@ alwaysApply: true
 
 Diretrizes para detecção e correção proativa de inconsistências no ecossistema VTEX IO.
 
+## Restrições de Escopo (CRÍTICO)
+
+- **NUNCA** aplique correções automáticas ou modificações em arquivos dentro das pastas `.cursor/` ou `examples/`.
+- O diagnóstico e a autocorreção devem focar exclusivamente no código do projeto do usuário (ex: `react/`, `node/`, `store/`, `src/`).
+
 ## Workflow de Diagnóstico
 
 Sempre que detectar um erro de terminal ou inconsistência de padrão, execute:

@@ -7,6 +7,9 @@ globs: ["cms/**", "src/**"]
 
 Diretrizes para desenvolvimento de lojas utilizando FastStore, focando em modularidade, extensibilidade e integração com Headless CMS.
 
+## Consulta de Boas Práticas (Opcional - Recomendado)
+- Antes de iniciar qualquer implementação complexa de Estilo, CMS ou Componentes, utilize a skill `faststore-consultant` para buscar as diretrizes oficiais em `developers.vtex.com`.
+
 ## Comandos de Geração
 
 ### @new-faststore-cms - Configuração de Headless CMS

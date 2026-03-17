@@ -21,3 +21,4 @@ and this project adheres to
 - Global workflows section in README.
 - Updated `GUIA_DE_USO.md` with FastStore instructions and workflows.
 - Standardized command naming: renamed `@new-block`, `@new-component`, and `@new-service` to `@new-storefront-block`, `@new-storefront-component`, and `@new-storefront-service` respectively.
+- New skills to handling vtex contexts.
