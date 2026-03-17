@@ -1,0 +1,48 @@
+---
+description: Diretivas operacionais para desenvolvimento de serviços Node.js no VTEX IO
+globs: ["node/**/*.ts", "node/**/*.js", "manifest.json", "service.json"]
+alwaysApply: true
+---
+
+# VTEX IO Backend Generation Workflow
+
+Diretrizes para criação de serviços robustos, performáticos e escaláveis seguindo o padrão Full Stack.
+
+## Workflow de Geração (@new-service)
+
+Ao desenvolver novos serviços, a IA deve executar automaticamente este workflow de ponta a ponta:
+
+### 1. Camada de Clients (`node/clients/`)
+- **JanusClient**: Para APIs nativas da VTEX (ex: Checkout, OMS).
+- **ExternalClient**: Para APIs de terceiros.
+- **Implementação**: Definir a classe, o construtor com cabeçalhos de autenticação (`VtexIdclientAutCookie` ou `AppKey/AppToken`) e os métodos de API.
+- **Registro**: Adicionar o getter do novo client em `node/clients/index.ts`.
+
+### 2. Camada de Middlewares (`node/middlewares/`)
+- Criar um arquivo específico para a lógica do serviço.
+- **Lógica**: Consumir o client recém-criado, tratar o corpo da requisição (`co-body`) e implementar tratamento de erros (`try/catch`).
+- **Contexto**: Utilizar a tipagem `Context` global.
+
+### 3. Configuração de Rotas (`node/service.json`)
+- Adicionar a nova rota ao objeto `routes`.
+- Definir o `path` (ex: `/_v/custom-api`) e a visibilidade (`public: true/false`).
+
+### 4. Orquestração do Serviço (`node/index.ts`)
+- Importar o novo middleware.
+- Associar o middleware à rota correspondente no objeto `routes` do `Service`.
+- Garantir que o `LRUCache` esteja configurado para o novo client se necessário.
+
+## Referência Obrigatória
+
+Utilize os arquivos em `examples/storefront/node-services/node/` como a única fonte de verdade para:
+- **Clients**: `clients/checkout.ts` (Janus) e `clients/pricing.ts` (External).
+- **Middlewares**: `middlewares/attachments.ts` e `middlewares/pricing.ts`.
+- **Configuração**: `index.ts` e `service.json`.
+
+## Checklist de Validação
+
+- [ ] O client está registrado em `node/clients/index.ts`?
+- [ ] O middleware implementa tratamento de erro e retorna status HTTP?
+- [ ] A rota está declarada em `node/service.json` com o path correto?
+- [ ] O middleware está associado à rota em `node/index.ts`?
+- [ ] Cabeçalhos de autenticação seguem o padrão do tipo de client?

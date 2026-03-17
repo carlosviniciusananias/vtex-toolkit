@@ -1,0 +1,18 @@
+[
+  {
+    "name": "CustomLandingPageSection",
+    "schema": {
+      "title": "Custom Landing Page",
+      "description": "",
+      "type": "object",
+      "required": ["skipLazyLoadingSection"],
+      "properties": {
+        "skipLazyLoadingSection": {
+          "title": "Skip lazy loading",
+          "type": "boolean",
+          "default": true
+        }
+      }
+    }
+  }
+]

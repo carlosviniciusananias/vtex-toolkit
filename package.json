@@ -1,0 +1,22 @@
+{
+  "name": "vtex-toolkit",
+  "version": "1.0.0",
+  "description": "Regras inteligentes para Cursor no ecossistema VTEX",
+  "main": "index.js",
+  "scripts": {
+    "format": "prettier --write \"**/*.{md,mdc,json,jsonc,js,ts,tsx,css}\"",
+    "format:check": "prettier --check \"**/*.{md,mdc,json,jsonc,js,ts,tsx,css}\""
+  },
+  "keywords": [
+    "vtex",
+    "cursor",
+    "rules",
+    "storefront",
+    "faststore"
+  ],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "prettier": "^3.0.0"
+  }
+}

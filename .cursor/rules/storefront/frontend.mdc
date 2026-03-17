@@ -1,0 +1,44 @@
+---
+description: Diretivas operacionais para criação de componentes React no VTEX IO
+globs: ["react/**/*.tsx", "react/**/*.ts", "react/**/*.js"]
+alwaysApply: true
+---
+
+# VTEX IO Frontend Generation Workflow
+
+Diretrizes para garantir que novos componentes React sigam os padrões técnicos e estruturais do projeto.
+
+## Workflow de Geração (@new-component)
+
+Ao criar um novo componente React, siga rigorosamente este workflow:
+
+1.  **Estrutura de Pastas e Exportação**:
+    - Crie o componente em `react/components/{NomeDoComponente}/index.tsx`.
+    - Exponha o componente na raiz da pasta `react/` (ex: `react/{NomeDoComponente}.tsx`).
+
+2.  **Configuração VTEX IO**:
+    - Declare o componente em `store/interfaces.json`.
+    - Utilize a interface `StoreFrontFC` definida em `react/typings/store-front.d.ts`.
+
+3.  **Implementação Técnica (Padrão VTEX)**:
+    - Utilize `useCssHandles` para gerenciar classes CSS e permitir customização externa.
+    - Utilize `react-intl` para todas as strings visíveis ao usuário.
+    - Utilize hooks nativos (`useRuntime`, `useDevice`) conforme necessário.
+
+4.  **Schema do Site Editor**:
+    - Implemente o `schema` estático no componente para permitir edição via Site Editor.
+
+## Referência Obrigatória
+
+Utilize o arquivo `examples/storefront/custom-components/react/components/Breadcrumb/index.tsx` como a única fonte de verdade para:
+- Estrutura de subcomponentes.
+- Implementação de `schema`.
+- Uso de hooks e utilitários (`examples/storefront/custom-components/utils/index.ts`).
+
+## Checklist de Validação
+
+- [ ] O componente está exportado corretamente na raiz de `react/`?
+- [ ] A interface está declarada em `store/interfaces.json`?
+- [ ] O `schema` do Site Editor está presente e funcional?
+- [ ] Todas as strings estão internacionalizadas com `react-intl`?
+- [ ] O componente utiliza `useCssHandles` para estilização?

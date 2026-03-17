@@ -1,0 +1,73 @@
+---
+description: Comandos globais, workflows de integridade e geração para o projeto VTEX Toolkit
+globs: ["**/*"]
+alwaysApply: true
+---
+
+# VTEX Toolkit Global Workflows
+
+Regras de nível de projeto para automação de tarefas transversais, manutenção de padrões e geração de código.
+
+## Comandos Ativos de Geração
+
+Sempre que o usuário utilizar uma das palavras-chave abaixo, execute o workflow correspondente:
+
+### @new-block - Geração de Blocos JSONC
+1.  Identificar o tipo de componente (Hero, Shelf, Newsletter, etc).
+2.  Aplicar o workflow definido em `storefront/blocks.mdc`.
+3.  Garantir encapsulamento em `flex-layout.row` e `flex-layout.col`.
+4.  Validar integridade de referências (#) e performance (preload, fold).
+
+### @new-component - Geração de Componente React
+1.  Seguir a estrutura de pastas e exportação definida em `storefront/frontend.mdc`.
+2.  Utilizar `useCssHandles`, `react-intl` e a tipagem `StoreFrontFC`.
+3.  Gerar automaticamente a declaração em `store/interfaces.json`.
+4.  Basear-se no exemplo real em `examples/storefront/custom-components/`.
+
+### @new-service - Geração de Serviço Node.js (Full Stack)
+1.  **Client**: Criar o Client (Janus ou External) em `node/clients/`.
+2.  **Middleware**: Criar o middleware com lógica de consumo em `node/middlewares/`.
+3.  **Rota**: Definir a rota (path e visibilidade) em `node/service.json`.
+4.  **Orquestração**: Registrar o client em `node/clients/index.ts` e associar o middleware à rota em `node/index.ts`.
+5.  Basear-se nos exemplos reais em `examples/storefront/node-services/`.
+
+### @new-faststore-cms - Geração de Configuração CMS
+1.  **Localização**: Pasta `/cms` na raiz.
+2.  **Arquivos**: `content-types.json` e `sections.json`.
+3.  **Referências**: `examples/faststore/cms/`.
+
+### @new-faststore-components - Geração de Componentes/Overrides
+1.  **Padrão**: Atomic Design em `src/components/`.
+2.  **Overrides**: Em `src/components/overrides/` usando `SectionOverride`.
+3.  **Exportação**: Registrar em `src/components/index.tsx`.
+4.  **Referências**: `examples/faststore/src/components/`.
+
+### @new-faststore-resolvers - Geração de Lógica GraphQL
+1.  **Estrutura**: Fragments, Resolvers e TypeDefs em `src/`.
+2.  **Registro**: Resolvers devem ser registrados no `index.ts` da pasta.
+3.  **Referências**: `examples/faststore/src/graphql/` e `src/fragments/`.
+
+## Comandos de Manutenção
+
+### @health - Varredura de Integridade
+1.  Verificar integridade de referências em arquivos JSONC.
+2.  Validar se todos os blocos com `#` possuem definição.
+3.  Verificar se o `__fold__` está presente em páginas home.
+4.  Checar se o primeiro banner possui `preload: true`.
+5.  Reportar inconsistências encontradas.
+
+### @format - Formatação de Código
+1.  Executar o comando `npm run format` via terminal.
+2.  Confirmar ao usuário que a formatação foi concluída.
+
+### @pr-ready - Preparação para Pull Request
+1.  Executar `@health`.
+2.  Executar `@format`.
+3.  Verificar se o `README.md` ou `docs/` precisam de atualização baseada nas mudanças recentes.
+4.  Gerar um resumo conciso das alterações para o corpo do PR.
+
+## Diretrizes de Comportamento
+
+- **Tom de Voz**: Seja puramente diretivo e técnico. Evite explicações prolixas.
+- **Proatividade**: Se detectar um erro óbvio de padrão VTEX durante qualquer edição, sugira a correção imediatamente (Self-healing).
+- **Referências**: Sempre utilize os arquivos na pasta `examples/` como a única fonte de verdade para estilo e estrutura.

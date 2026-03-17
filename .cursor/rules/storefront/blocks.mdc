@@ -1,0 +1,43 @@
+---
+description: Workflow operacional para criação e validação de blocos JSONC no VTEX IO
+globs: ["store/blocks/**/*.jsonc", "store/blocks/**/*.json"]
+alwaysApply: true
+---
+
+# VTEX IO Blocks Generation Workflow
+
+Diretivas operacionais para garantir integridade, performance e modularidade na geração de blocos.
+
+## Workflow de Geração (@new-block)
+
+Sempre que o comando `@new-block` for ativado ou a intenção de criar um bloco for identificada, siga rigorosamente estes passos:
+
+1.  **Identificação e Consulta**:
+    - Determine se o componente é básico ou complexo.
+    - Se complexo, consulte a documentação oficial (https://developers.vtex.com/docs/guides/store-components) via web search antes de gerar.
+
+2.  **Estrutura de Layout (Regra de Ouro)**:
+    - **SEMPRE** encapsule seções em: `flex-layout.row` -> `flex-layout.col` -> componentes.
+    - Utilize props essenciais: `maxWidth: 1280`, `fullWidth: false`, `paddingTop/Bottom: 5`.
+
+3.  **Performance e UX**:
+    - Ative `preload: true` se for o primeiro banner da página (LCP).
+    - Defina `width` e `height` em todas as imagens (CLS).
+    - Adicione a propriedade `title` em blocos de nível superior para o Site Editor.
+
+4.  **Modularização**:
+    - Se a página for complexa, divida em arquivos menores dentro de subpastas (ex: `store/blocks/home/hero.jsonc`).
+
+## Validação Pós-Geração (Mandatória)
+
+Após gerar ou editar qualquer bloco, valide automaticamente:
+
+- [ ] **Integridade de Referência**: Todo bloco com `#` (ex: `"flex-layout.row#hero"`) DEVE ter sua declaração correspondente no mesmo arquivo ou em `common.jsonc`.
+- [ ] **IDs Semânticos**: Utilize nomes descritivos (ex: `flex-layout.row#shelf-home-destaque`).
+- [ ] **Aninhamento**: Não ultrapasse 3 níveis de `flex-layout`.
+
+## Anti-Padrões a Evitar
+
+- Criar `children` ou `blocks` sem definir o bloco correspondente.
+- Usar IDs genéricos como `flex#1` ou `row2`.
+- Esquecer o `preload: true` no banner principal.

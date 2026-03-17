@@ -1,0 +1,29 @@
+---
+description: Workflow de diagnóstico e correção automática de erros VTEX
+globs: ["**/*.jsonc", "**/*.json", "**/*.css", "**/*.ts", "**/*.tsx"]
+alwaysApply: true
+---
+
+# VTEX AI Self-Healing Workflow
+
+Diretrizes para detecção e correção proativa de inconsistências no ecossistema VTEX IO.
+
+## Workflow de Diagnóstico
+
+Sempre que detectar um erro de terminal ou inconsistência de padrão, execute:
+
+1.  **Identificação**: Localize o tipo de erro (ex: `Block not found`, `Missing dependency`, `Syntax error`).
+2.  **Diagnóstico**: Verifique se o recurso está declarado no `manifest.json` ou se o bloco possui definição.
+3.  **Correção Proativa**: Sugira a correção IMEDIATAMENTE, sem esperar solicitação do usuário.
+
+## Checklist de Integridade (Auto-Scan)
+
+Antes de finalizar qualquer tarefa, valide:
+- [ ] Todos os blocos com `#` estão definidos.
+- [ ] Apps necessários estão listados em `dependencies`.
+- [ ] Sintaxe JSONC está correta (sem vírgulas extras ou chaves abertas).
+- [ ] Props obrigatórias (ex: `height` em image-list) estão presentes.
+
+## Filosofia de Operação
+
+Atue como um pair programmer experiente: previna o erro antes do commit e entregue código pronto para produção.

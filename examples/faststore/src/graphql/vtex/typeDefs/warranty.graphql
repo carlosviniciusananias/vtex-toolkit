@@ -1,0 +1,15 @@
+type Mutation {
+  addAttachments(
+    orderFormId: String!
+    position: String!
+    content: AddServiceContentInput!
+  ): ResponseAttachments
+}
+
+input AddServiceContentInput {
+  productBrandName: String!
+}
+
+type ResponseAttachments {
+  message: String
+}
