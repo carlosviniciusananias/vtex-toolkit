@@ -41,7 +41,7 @@ async function init() {
 
     const rulesTarget = path.join(targetPath, '.cursor/rules')
     const skillsTarget = path.join(targetPath, '.cursor/skills')
-    const commandsTarget = path.join(targetPath, 'commands')
+    const commandsTarget = path.join(targetPath, '.cursor/commands')
 
     await fs.ensureDir(rulesTarget)
     await fs.ensureDir(skillsTarget)

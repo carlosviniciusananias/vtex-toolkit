@@ -17,20 +17,20 @@ Regras de nível de projeto para automação de tarefas transversais, manutenç�
 
 ## Comandos Ativos de Geração
 
-Sempre que o usuário utilizar uma das palavras-chave abaixo ou referenciar arquivos em `commands/`, execute o workflow correspondente:
+Sempre que o usuário utilizar uma das palavras-chave abaixo ou referenciar arquivos em `.cursor/commands/`, execute o workflow correspondente:
 
 ### @new-storefront-block - Geração de Blocos JSONC
-- Consultar `commands/new-block.md` para parâmetros.
+- Consultar `.cursor/commands/new-block.md` para parâmetros.
 - Seguir `storefront/blocks.mdc`.
 - Encapsular em `flex-layout.row` -> `flex-layout.col`.
 
 ### @new-storefront-component - Geração de Componente React
-- Consultar `commands/new-component.md` para parâmetros.
+- Consultar `.cursor/commands/new-component.md` para parâmetros.
 - Seguir `storefront/frontend.mdc`.
 - Usar `useCssHandles`, `react-intl` e `StoreFrontFC`.
 
 ### @new-storefront-service - Geração de Serviço Node.js
-- Consultar `commands/new-service.md` para parâmetros.
+- Consultar `.cursor/commands/new-service.md` para parâmetros.
 - Seguir `storefront/backend.mdc`.
 - Client, Middleware, Resolvers e Configuração.
 

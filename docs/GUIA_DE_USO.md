@@ -21,7 +21,7 @@ Este comando irá:
    **FastStore**).
 2. Instalar as regras inteligentes em `.cursor/rules/`.
 3. Instalar as habilidades (skills) em `.cursor/skills/`.
-4. Instalar os atalhos de comandos em `commands/`.
+4. Instalar os atalhos de comandos em `.cursor/commands/`.
 
 ---
 
@@ -47,7 +47,7 @@ oficiais:
 
 ### 3. Comandos Rápidos
 
-Localizados em `commands/`, servem como atalhos para os workflows `@new-*`.
+Localizados em `.cursor/commands/`, servem como atalhos para os workflows `@new-*`.
 
 ---
 
