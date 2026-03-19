@@ -1,8 +1,9 @@
 # VTEX Toolkit
 
-O **VTEX Toolkit** é um conjunto de regras inteligentes (.mdc), comandos e
-habilidades (skills) para o Cursor IDE, projetado para acelerar o
-desenvolvimento no ecossistema VTEX (IO e FastStore).
+O **VTEX Toolkit** é um ecossistema de produtividade para o Cursor IDE,
+projetado para acelerar o desenvolvimento de lojas **VTEX IO (Storefront)** e
+**FastStore**. Através de regras inteligentes, habilidades de consulta e
+comandos automatizados, ele transforma o Cursor em um especialista em VTEX.
 
 ## Instalação Rápida (Recomendado)
 
@@ -12,8 +13,49 @@ Abra o terminal na raiz do seu projeto e execute:
 npx vtex-toolkit
 ```
 
-Este comando automatiza a instalação das regras, comandos e habilidades
-necessárias para o seu framework (Storefront ou FastStore).
+Este comando automatiza a instalação de todo o ecossistema necessário para o seu
+framework:
+
+- **Regras Inteligentes (.mdc)**: Diretrizes técnicas e de performance.
+- **Habilidades (Skills)**: Capacidade de consulta a APIs e documentações
+  oficiais.
+- **Comandos Rápidos**: Atalhos para geração de código e manutenção.
+
+---
+
+## Guia de Uso Rápido
+
+Após a instalação, reinicie o seu **IDE**. Você pode ativar os workflows
+digitando `@` seguido do comando no chat ou Composer:
+
+### Geração de Código
+
+- **`@new-storefront-block`**: Gera blocos JSONC com títulos semânticos e
+  performance (LCP/CLS).
+- **`@new-storefront-component`**: Cria componentes React com auto-healing de
+  dependências.
+- **`@new-storefront-service`**: Desenvolve serviços Node.js completos (CRUD
+  ready).
+- **`@new-faststore-cms`**: Configura seções e tipos de conteúdo no Headless
+  CMS.
+- **`@new-faststore-components`**: Cria componentes e overrides seguindo Atomic
+  Design.
+- **`@new-faststore-resolvers`**: Implementa lógica GraphQL e resolvers.
+
+### Manutenção
+
+- **`@health`**: Varredura de integridade, referências (#) e performance.
+- **`@format`**: Formatação de código via Prettier.
+- **`@pr-ready`**: Prepara o resumo e validações para o seu Pull Request.
+
+### Consulta Especializada (Skills)
+
+O agente agora possui habilidades específicas que você pode solicitar:
+
+- _"Como faço para buscar um produto por ID usando a API do catálogo?"_ (Ativa a
+  skill `vtex-api-consultant`)
+- _"Como crio uma nova seção no CMS da FastStore?"_ (Ativa a skill
+  `faststore-consultant`)
 
 ---
 
@@ -32,40 +74,11 @@ VTEX:
 ### 2. Habilidades (Skills)
 
 Localizadas em `.cursor/skills/`, permitem que o agente consulte documentações
-oficiais:
-
-- `vtex-api-consultant`: Consulta de endpoints e autenticação de APIs VTEX.
-- `faststore-consultant`: Melhores práticas de componentes e CMS FastStore.
+oficiais em tempo real.
 
 ### 3. Comandos Rápidos
 
-Localizados em `commands/`, servem como atalhos para os workflows `@new-*`.
-
----
-
-## Como Usar
-
-Após a instalação, reinicie o seu **Cursor IDE**. Você pode ativar os workflows
-digitando `@` seguido do comando no chat ou Composer:
-
-### Comandos Storefront (VTEX IO)
-
-- `@new-storefront-block`: Gera blocos JSONC com títulos semânticos.
-- `@new-storefront-component`: Cria componentes React com auto-healing de
-  dependências.
-- `@new-storefront-service`: Desenvolve serviços Node.js completos (CRUD ready).
-
-### Comandos FastStore
-
-- `@new-faststore-cms`: Configura seções e tipos de conteúdo.
-- `@new-faststore-components`: Cria componentes e overrides.
-- `@new-faststore-resolvers`: Implementa lógica GraphQL e resolvers.
-
-### Manutenção
-
-- `@health`: Varredura de integridade e performance.
-- `@format`: Formatação de código via Prettier.
-- `@pr-ready`: Prepara o resumo e validações para o seu Pull Request.
+Localizados em `commands/`, servem como atalhos para os workflows de geração.
 
 ---
 
@@ -80,12 +93,8 @@ digitando `@` seguido do comando no chat ou Composer:
 - **Site Editor**: Nunca remova a propriedade `title` dos blocos JSONC; ela é
   vital para a experiência do lojista no admin.
 
-## 📖 Documentação Detalhada
-
-Consulte o [Guia de Uso](docs/GUIA_DE_USO.md) para mais detalhes sobre a
-instalação e workflows.
-
 ## Contribuindo
 
 Este é um projeto open source! Sinta-se à vontade para abrir Issues ou Pull
-Requests.
+Requests. Para detalhes avançados de instalação, consulte o
+[Guia de Uso Completo](docs/GUIA_DE_USO.md).
