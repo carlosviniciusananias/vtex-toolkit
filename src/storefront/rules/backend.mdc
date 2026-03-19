@@ -1,0 +1,31 @@
+---
+description: Diretivas operacionais para desenvolvimento de serviços Node.js no VTEX IO
+globs: ["node/**/*.ts", "node/**/*.js", "manifest.json", "service.json"]
+alwaysApply: true
+---
+
+# VTEX IO Backend Generation Workflow
+
+Diretrizes para criação de serviços robustos e escaláveis no padrão Full Stack.
+
+## Destino Obrigatório
+- Todas as implementações em `node/`.
+- `examples/` apenas para consulta.
+
+## Workflow de Geração (@new-service)
+
+1. **Consulta de API**: Usar skill `.cursor/skills/vtex-api-consultant` para endpoints e auth.
+2. **Clients (`node/clients/`)**: `JanusClient` (VTEX) ou `ExternalClient` (Terceiros). Registrar em `node/clients/index.ts`.
+3. **Middlewares (`node/middlewares/`)**: Lógica de consumo, `co-body` e `try/catch`.
+4. **Resolvers (`node/resolvers/`)**: Queries/Mutations. Exportar em `node/resolvers/index.ts`.
+5. **Rotas (`node/service.json`)**: Definir `path` e `public`.
+6. **Orquestração (`node/index.ts`)**: Registrar resolvers e associar middlewares às rotas.
+
+## Referência Obrigatória
+- `https://raw.githubusercontent.com/carlosviniciusananias/vtex-toolkit/main/examples/storefront/back-end/node/`.
+
+## Checklist
+- [ ] Client registrado em `index.ts`?
+- [ ] Middleware com `try/catch` e status HTTP?
+- [ ] Resolvers exportados?
+- [ ] Rota em `service.json` e associada em `index.ts`?

@@ -1,0 +1,30 @@
+---
+description: Workflow operacional para criação e validação de blocos JSONC no VTEX IO
+globs: ["store/blocks/**/*.jsonc", "store/blocks/**/*.json"]
+alwaysApply: true
+---
+
+# VTEX IO Blocks Generation Workflow
+
+Modularidade e integridade na geração de blocos.
+
+## Destino Obrigatório
+- Pasta `store/`.
+
+## Workflow de Geração (@new-block)
+
+1. **Layout**: `flex-layout.row` -> `flex-layout.col`..
+2. **Site Editor (CRÍTICO)**: 
+   - **SEMPRE** incluir a propriedade `"title"` em blocos de nível superior ou componentes editáveis.
+   - O título deve ser **semântico e contextual** (ex: `"title": "Banner Principal - Home"`, `"title": "Prateleira de Lançamentos"`).
+   - Evitar títulos genéricos ou aleatórios.
+3. **Performance**: `preload: true` (LCP), `width`/`height` em imagens (CLS).
+4. **Modularização**: Subpastas para páginas complexas (ex: `store/blocks/home/`).
+
+## Referência Obrigatória
+- `https://raw.githubusercontent.com/carlosviniciusananias/vtex-toolkit/main/examples/storefront/store-theme`.
+
+## Validação (Mandatória)
+- [ ] Blocos com `#` declarados no arquivo ou em `common.jsonc`.
+- [ ] IDs semânticos e aninhamento max 3 níveis.
+- [ ] Sem `children`/`blocks` órfãos.

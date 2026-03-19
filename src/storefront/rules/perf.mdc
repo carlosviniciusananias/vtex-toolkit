@@ -1,0 +1,30 @@
+---
+description: Diretivas operacionais para otimização de performance no VTEX IO
+globs: ["store/blocks/**/*.jsonc", "store/blocks/**/*.json"]
+alwaysApply: true
+---
+
+# VTEX IO Performance Workflow
+
+Diretrizes para garantir que a loja atinja índices ideais de Core Web Vitals.
+
+## Diretivas de Otimização
+
+Sempre aplique estas regras durante a edição de layouts:
+
+1.  **LCP (Largest Contentful Paint)**:
+    - O primeiro banner visível DEVE ter `preload: true`.
+    - Utilize imagens WebP e defina resoluções específicas para mobile.
+2.  **CLS (Cumulative Layout Shift)**:
+    - Defina `width` e `height` explícitos em todos os blocos de imagem.
+    - Reserve espaço para elementos carregados dinamicamente.
+3.  **Lazy Loading**:
+    - Utilize o divisor `__fold__` após os primeiros 2-3 blocos visíveis.
+    - Ative `lazyLoad: true` em prateleiras (shelves) abaixo da dobra.
+
+## Checklist de Validação
+
+Após qualquer alteração, verifique:
+- [ ] O divisor `__fold__` está posicionado corretamente (~1200px de altura total acumulada).
+- [ ] Menus complexos utilizam `experimentalOptimizeRendering: true`.
+- [ ] O aninhamento de `flex-layout` não ultrapassa 3 níveis.

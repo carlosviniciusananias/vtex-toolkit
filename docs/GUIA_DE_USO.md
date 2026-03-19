@@ -1,19 +1,24 @@
 # Guia de Uso: VTEX Toolkit para Cursor
 
-Este repositório contém um conjunto de regras (.mdc) otimizadas para o Cursor,
-focadas em acelerar o desenvolvimento no ecossistema VTEX.
+Este repositório contém um conjunto de regras (.mdc) e comandos otimizados para
+o Cursor, focados em acelerar o desenvolvimento no ecossistema VTEX (IO e
+FastStore).
 
-## O que mudou?
+## O que há de novo?
 
-A estrutura foi reorganizada para suportar múltiplos frameworks e tecnologias de
-forma modular:
+A estrutura foi otimizada para máxima eficiência de tokens e segurança
+operacional:
 
-- **Storefront (VTEX IO)**: Regras para Blocks (JSONC), Frontend (React/TS) e
-  Backend (Node/TS).
-- **FastStore**: Suporte completo para Headless CMS, Componentes e Resolvers GraphQL.
-- **Referências Oficiais**: Link direto para a documentação da VTEX.
-- **Checklists de Auto-validação**: Garantia de integridade de referências e
-  performance.
+- **Otimização de Tokens**: Regras globais e de domínio reescritas para serem
+  puramente diretivas.
+- **Pasta `commands/`**: Atalhos rápidos com parâmetros definidos para todos os
+  workflows.
+- **Auto-Healing de Dependências**: Validação proativa de `manifest.json` ao
+  criar componentes.
+- **Site Editor Ready**: Garantia de títulos semânticos em todos os blocos
+  JSONC.
+- **Confirmação de Intenção**: O agente confirma ações complexas para evitar
+  gerações acidentais.
 
 ---
 
@@ -22,69 +27,80 @@ forma modular:
 ```text
 .cursor/rules/
 ├── storefront/
-│   ├── blocks.mdc        - Templates de blocos (hero, shelf, newsletter, etc)
-│   ├── frontend.mdc      - Padrões para componentes React customizados
-│   ├── backend.mdc       - Padrões para serviços Node.js
-│   ├── perf.mdc          - Checklist de performance automatizado
-│   ├── styles.mdc        - Templates CSS e tokens
-│   └── self-healing.mdc  - Auto-correção de erros
+│   ├── blocks.mdc        - Templates de blocos (JSONC)
+│   ├── frontend.mdc      - Componentes React customizados
+│   ├── backend.mdc       - Serviços Node.js (Full Stack)
+│   ├── perf.mdc          - Checklist de performance (CWV)
+│   ├── styles.mdc        - CSS Modules e Design Tokens
+│   └── self-healing.mdc  - Auto-correção e integridade
 ├── faststore/
-│   └── general.mdc       - Padrões para FastStore (CMS, UI, GraphQL)
-└── global.mdc            - Regras gerais do projeto
+│   └── general.mdc       - Padrões FastStore (CMS, UI, GraphQL)
+└── global.mdc            - Orquestrador global de workflows
+
+commands/                 - Atalhos e parâmetros para comandos @new-*
+├── new-block.md
+├── new-component.md
+├── new-service.md
+├── new-faststore-cms.md
+├── new-faststore-components.md
+└── new-faststore-resolvers.md
 ```
 
 ---
 
 ## Como Usar no Cursor
 
-### Passo 1: Copiar para seu projeto
+### Passo 1: Instalação no seu Projeto
+
+Para utilizar o toolkit, copie as pastas `.cursor/rules/` e `commands/` para a
+raiz do seu projeto:
 
 ```bash
-# Copie as regras do framework desejado para a pasta .cursor/rules/ do seu projeto
-cp -r .cursor/rules/storefront/ seu-projeto/.cursor/rules/
-# OU para FastStore
-cp -r .cursor/rules/faststore/ seu-projeto/.cursor/rules/
+cp -r .cursor/rules/ your-project/
+cp -r commands/ your-project/
 ```
 
-### Passo 2: Reiniciar Cursor
+### Passo 2: Ativação
 
-Feche e abra o Cursor novamente para carregar as novas regras.
+O Cursor reconhecerá as regras automaticamente. Utilize o símbolo `@` seguido do
+comando desejado no chat ou no Composer.
 
 ---
 
 ## Comandos Disponíveis
 
-Utilize os comandos abaixo precedidos por `@` para ativar os workflows
-automatizados.
+### Storefront (VTEX IO)
 
-### Geração de Código
+- **`@new-storefront-block`**: Gera blocos JSONC com `title` semântico e
+  performance (LCP/CLS).
+- **`@new-storefront-component`**: Cria componentes React com `useCssHandles` e
+  auto-healing de `manifest.json`.
+- **`@new-storefront-service`**: Gera serviços Node.js (Client, Middleware,
+  Resolver) com suporte a CRUD.
 
-- **`@new-storefront-block`**: Gera blocos JSONC (Hero, Shelf, Newsletter, etc) seguindo
-  padrões de performance e acessibilidade.
-- **`@new-storefront-component`**: Cria componentes React customizados com `useCssHandles`,
-  `react-intl` e declaração automática em `interfaces.json`.
-- **`@new-storefront-service`**: Gera serviços Node.js completos (Client, Middleware e
-  Rota) seguindo a arquitetura VTEX IO.
-- **`@new-faststore-cms`**: Configura seções e tipos de conteúdo no Headless CMS.
-- **`@new-faststore-components`**: Cria componentes e overrides seguindo Atomic Design.
-- **`@new-faststore-resolvers`**: Implementa lógica GraphQL e resolvers customizados.
+### FastStore
 
-### Manutenção e Qualidade
+- **`@new-faststore-cms`**: Configura `content-types.json` e `sections.json`.
+- **`@new-faststore-components`**: Cria componentes/overrides seguindo Atomic
+  Design.
+- **`@new-faststore-resolvers`**: Implementa lógica GraphQL (TypeDefs e
+  Resolvers).
 
-- **`@health`**: Realiza uma varredura de integridade em arquivos JSONC,
-  validando referências (`#`), performance e boas práticas.
-- **`@format`**: Executa a formatação de código do projeto.
-- **`@pr-ready`**: Prepara o ambiente para Pull Request, executando `@health`,
-  `@format` e gerando um resumo das alterações.
+### Manutenção
+
+- **`@health`**: Varredura de integridade, referências (#) e performance.
+- **`@format`**: Executa `npm run format`.
+- **`@pr-ready`**: Prepara o PR (Health + Format + Resumo).
 
 ---
 
-## Checklist de Entrega
+## Boas Práticas e Segurança
 
-Para aproveitar ao máximo:
-
-- [ ] Arquivos .mdc estão em .cursor/rules/
-- [ ] Cursor foi reiniciado após cópia
-- [ ] Validou a integridade do projeto com `@health`
-- [ ] Formatou o código com `@format` antes de subir
-- [ ] Utilizou `@pr-ready` para revisar as mudanças finalizadas
+1. **Confirmação**: O agente pode pedir confirmação antes de criar múltiplos
+   arquivos de backend.
+2. **Referências**: A pasta `examples/` é a única fonte de verdade para padrões
+   de código.
+3. **Títulos**: Nunca remova a propriedade `title` dos blocos; ela é essencial
+   para o Site Editor.
+4. **Dependências**: O toolkit avisará se você esquecer de adicionar o app de
+   frontend no `manifest.json` do app de store.
