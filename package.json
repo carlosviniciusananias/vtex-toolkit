@@ -28,5 +28,17 @@
     "fs-extra": "^11.3.4",
     "inquirer": "^9.3.8",
     "ora": "^5.4.1"
-  }
+  },
+  "directories": {
+    "doc": "docs",
+    "example": "examples"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/carlosviniciusananias/vtex-toolkit.git"
+  },
+  "bugs": {
+    "url": "https://github.com/carlosviniciusananias/vtex-toolkit/issues"
+  },
+  "homepage": "https://github.com/carlosviniciusananias/vtex-toolkit#readme"
 }
