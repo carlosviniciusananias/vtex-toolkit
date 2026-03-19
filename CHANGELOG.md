@@ -8,6 +8,11 @@ and this project adheres to
 
 ## [Unreleased]
 
+### Added
+
+- Added `title` attribute in `blocks.mdc`
+- Added auto-healing of dependencies
+
 ## [1.0.0] - 2026-03-17
 
 ### Added

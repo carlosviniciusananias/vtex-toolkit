@@ -25,7 +25,9 @@ Sempre que detectar um erro de terminal ou inconsistência de padrão, execute:
 
 Antes de finalizar qualquer tarefa, valide:
 - [ ] Todos os blocos com `#` estão definidos.
-- [ ] Apps necessários estão listados em `dependencies`.
+- [ ] **Site Editor Ready**: Blocos editáveis possuem a propriedade `title` semântica.
+- [ ] Apps necessários estão listados em `dependencies` no `manifest.json`.
+- [ ] **Cross-App Dependency**: Se um novo componente React foi criado, ele deve estar no `manifest.json` do app que define os blocos (`store/`).
 - [ ] Sintaxe JSONC está correta (sem vírgulas extras ou chaves abertas).
 - [ ] Props obrigatórias (ex: `height` em image-list) estão presentes.
 

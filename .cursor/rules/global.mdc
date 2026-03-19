@@ -12,74 +12,46 @@ Regras de nível de projeto para automação de tarefas transversais, manutenç�
 
 - **NUNCA** crie ou modifique arquivos dentro das pastas `.cursor/` ou `examples/`.
 - **NUNCA** altere a configuração do toolkit ou suas regras internas.
-- Todas as implementações devem ser realizadas exclusivamente nas pastas de código do projeto do usuário (ex: `react/`, `node/`, `store/`, `src/`, `cms/`).
-- Os arquivos na pasta `examples/` servem **APENAS** como referência de leitura e nunca devem ser editados.
+- Implementações exclusivas nas pastas: `react/`, `node/`, `store/`, `src/`, `cms/`.
+- Arquivos em `examples/` são **APENAS** para referência.
 
 ## Comandos Ativos de Geração
 
-Sempre que o usuário utilizar uma das palavras-chave abaixo, execute o workflow correspondente:
+Sempre que o usuário utilizar uma das palavras-chave abaixo ou referenciar arquivos em `commands/`, execute o workflow correspondente:
 
 ### @new-storefront-block - Geração de Blocos JSONC
-1.  Identificar o tipo de componente (Hero, Shelf, Newsletter, etc).
-2.  Aplicar o workflow definido em `storefront/blocks.mdc`.
-3.  Garantir encapsulamento em `flex-layout.row` e `flex-layout.col`.
-4.  Validar integridade de referências (#) e performance (preload, fold).
+- Consultar `commands/new-block.md` para parâmetros.
+- Seguir `storefront/blocks.mdc`.
+- Encapsular em `flex-layout.row` -> `flex-layout.col`.
 
 ### @new-storefront-component - Geração de Componente React
-1.  Seguir a estrutura de pastas e exportação definida em `storefront/frontend.mdc`.
-2.  Utilizar `useCssHandles`, `react-intl` e a tipagem `StoreFrontFC`.
-3.  Gerar automaticamente a declaração em `store/interfaces.json`.
-4.  Basear-se no exemplo real em `examples/storefront/custom-components/`.
+- Consultar `commands/new-component.md` para parâmetros.
+- Seguir `storefront/frontend.mdc`.
+- Usar `useCssHandles`, `react-intl` e `StoreFrontFC`.
 
-### @new-storefront-service - Geração de Serviço Node.js (Full Stack)
-1.  **Consulta (Opcional)**: Consultar a documentação oficial da API VTEX em `developers.vtex.com` utilizando a skill `vtex-api-consultant`.
-2.  **Client**: Criar o Client (Janus ou External) em `node/clients/`.
-3.  **Middleware**: Criar o middleware com lógica de consumo em `node/middlewares/`.
-4.  **Resolvers (GraphQL)**: Se necessário, criar resolvers em `node/resolvers/` e exportar centralizadamente no `index.ts` da pasta.
-5.  **Rota**: Definir a rota (path e visibilidade) em `node/service.json`.
-6.  **Orquestração**: Registrar o client em `node/clients/index.ts`, associar o middleware à rota e/ou registrar os resolvers no `graphql` do `Service` em `node/index.ts`.
-7.  Basear-se nos exemplos reais em `examples/storefront/back-end/node/`.
+### @new-storefront-service - Geração de Serviço Node.js
+- Consultar `commands/new-service.md` para parâmetros.
+- Seguir `storefront/backend.mdc`.
+- Client, Middleware, Resolvers e Configuração.
 
-### @new-faststore-cms - Geração de Configuração CMS
-1.  **Consulta (Opcional)**: Consultar as melhores práticas de CMS na documentação oficial utilizando a skill `faststore-consultant`.
-2.  **Localização**: Pasta `/cms` na raiz.
-3.  **Arquivos**: `content-types.json` e `sections.json`.
-4.  **Referências**: `examples/faststore/cms/`.
-
-### @new-faststore-components - Geração de Componentes/Overrides
-1.  **Consulta (Opcional)**: Consultar as melhores práticas de componentes e features na documentação oficial utilizando a skill `faststore-consultant`.
-2.  **Padrão**: Atomic Design em `src/components/`.
-3.  **Overrides**: Em `src/components/overrides/` usando `SectionOverride`.
-4.  **Exportação**: Registrar em `src/components/index.tsx`.
-5.  **Referências**: `examples/faststore/src/components/`.
-
-### @new-faststore-resolvers - Geração de Lógica GraphQL
-1.  **Consulta (Opcional)**: Consultar as melhores práticas de GraphQL na documentação oficial utilizando a skill `faststore-consultant`.
-2.  **Estrutura**: Fragments, Resolvers e TypeDefs em `src/`.
-3.  **Registro**: Resolvers devem ser registrados no `index.ts` da pasta.
-4.  **Referências**: `examples/faststore/src/graphql/` e `src/fragments/`.
+### @new-faststore-cms | @new-faststore-components | @new-faststore-resolvers
+- Seguir padrões de Atomic Design, SectionOverride e GraphQL Resolvers.
+- Referências em `examples/faststore/`.
 
 ## Comandos de Manutenção
 
 ### @health - Varredura de Integridade
-1.  Verificar integridade de referências em arquivos JSONC.
-2.  Validar se todos os blocos com `#` possuem definição.
-3.  Verificar se o `__fold__` está presente em páginas home.
-4.  Checar se o primeiro banner possui `preload: true`.
-5.  Reportar inconsistências encontradas.
+- Validar referências (#), `__fold__` na home e `preload: true` no 1º banner.
 
 ### @format - Formatação de Código
-1.  Executar o comando `npm run format` via terminal.
-2.  Confirmar ao usuário que a formatação foi concluída.
+- Executar `npm run format`.
 
 ### @pr-ready - Preparação para Pull Request
-1.  Executar `@health`.
-2.  Executar `@format`.
-3.  Verificar se o `README.md` ou `docs/` precisam de atualização baseada nas mudanças recentes.
-4.  Gerar um resumo conciso das alterações para o corpo do PR.
+- Executar `@health` + `@format`.
+- Atualizar docs e gerar resumo das alterações.
 
 ## Diretrizes de Comportamento
 
-- **Tom de Voz**: Seja puramente diretivo e técnico. Evite explicações prolixas.
-- **Proatividade**: Se detectar um erro óbvio de padrão VTEX durante qualquer edição, sugira a correção imediatamente (Self-healing).
-- **Referências**: Sempre utilize os arquivos na pasta `examples/` como a única fonte de verdade para estilo e estrutura.
+- **Tom de Voz**: Puramente diretivo e técnico. Sem prolixidade.
+- **Proatividade**: Sugerir correções imediatas ao detectar erros de padrão (Self-healing).
+- **Referências**: `examples/` é a única fonte de verdade para estilo e estrutura.
