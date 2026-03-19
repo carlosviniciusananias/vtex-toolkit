@@ -1,8 +1,6 @@
 import { InstanceOptions, IOContext, JanusClient } from '@vtex/api'
 import { Content } from '../types/checkout'
 
-const CHECKOUT_BASE_URL = '/api/checkout/pub/orderForm'
-
 export class Checkout extends JanusClient {
   constructor(ctx: IOContext, options?: InstanceOptions) {
     super(ctx, {
@@ -26,7 +24,7 @@ export class Checkout extends JanusClient {
     }
 
     return this.http.post(
-      `${CHECKOUT_BASE_URL}/${orderFormId}/items/${position}/attachments/${attachmentName}`,
+      `/api/checkout/pub/orderForm/${orderFormId}/items/${position}/attachments/${attachmentName}`,
       contentPayload,
       {
         headers: {

@@ -10,6 +10,7 @@ and this project adheres to
 
 ### Added
 
+- Added `commands` and new `examples`
 - Added `title` attribute in `blocks.mdc`
 - Added auto-healing of dependencies
 

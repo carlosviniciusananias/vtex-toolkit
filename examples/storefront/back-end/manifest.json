@@ -1,0 +1,54 @@
+{
+  "vendor": "example",
+  "name": "example-service",
+  "version": "0.0.0",
+  "title": "Example Service",
+  "description": "Service for creating example orders with external providers, for example Pagar.me",
+  "mustUpdateAt": "2026-03-19",
+  "builders": {
+    "node": "18.x"
+  },
+  "policies": [
+    {
+      "name": "outbound-access",
+      "attrs": {
+        "host": "portal.vtexcommercestable.com.br",
+        "path": "/api/*"
+      }
+    },
+    {
+      "name": "outbound-access",
+      "attrs": {
+        "host": "{{account}}.vtexcommercestable.com.br",
+        "path": "/api/*"
+      }
+    },
+    {
+      "name": "ADMIN_DS"
+    },
+    {
+      "name": "OMSViewer"
+    },
+    {
+      "name": "AcessaTodosPedidos"
+    },
+    {
+      "name": "colossus-fire-event"
+    },
+    {
+      "name": "colossus-write-logs"
+    }
+  ],
+  "settingsSchema": {
+    "title": "Example Service Settings",
+    "type": "object",
+    "properties": {
+      "exampleSetting": {
+        "title": "Example Setting",
+        "description": "Example setting for the service",
+        "type": "string"
+      }
+    }
+  },
+  "$schema": "https://raw.githubusercontent.com/vtex/node-vtex-api/master/gen/manifest.schema"
+}
