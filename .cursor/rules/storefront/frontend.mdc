@@ -6,44 +6,25 @@ alwaysApply: true
 
 # VTEX IO Frontend Generation Workflow
 
-Diretrizes para garantir que novos componentes React sigam os padrões técnicos e estruturais do projeto.
+Padrões técnicos para novos componentes React.
 
-## Restrições de Escopo e Destino
-
-- **Destino Obrigatório**: Todas as implementações devem ser criadas exclusivamente na pasta `react/` da raiz do projeto do usuário.
-- **Isolamento de Exemplos**: Utilize os arquivos em `examples/` apenas para consulta. **NUNCA** modifique arquivos dentro de `examples/`.
+## Destino Obrigatório
+- Pasta `react/`. Componente em `react/components/{Nome}/index.tsx` e export em `react/{Nome}.tsx`.
 
 ## Workflow de Geração (@new-component)
 
-Ao criar um novo componente React, siga rigorosamente este workflow:
-
-1.  **Estrutura de Pastas e Exportação**:
-    - Crie o componente em `react/components/{NomeDoComponente}/index.tsx`.
-    - Exponha o componente na raiz da pasta `react/` (ex: `react/{NomeDoComponente}.tsx`).
-
-2.  **Configuração VTEX IO**:
-    - Declare o componente em `store/interfaces.json`.
-    - Utilize a interface `StoreFrontFC` definida em `react/typings/store-front.d.ts`.
-
-3.  **Implementação Técnica (Padrão VTEX)**:
-    - Utilize `useCssHandles` para gerenciar classes CSS e permitir customização externa.
-    - Utilize `react-intl` para todas as strings visíveis ao usuário.
-    - Utilize hooks nativos (`useRuntime`, `useDevice`) conforme necessário.
-
-4.  **Schema do Site Editor**:
-    - Implemente o `schema` estático no componente para permitir edição via Site Editor.
+1. **Configuração**: Declarar em `store/interfaces.json`. Usar `StoreFrontFC`.
+2. **Implementação**: `useCssHandles`, `react-intl`, `useRuntime`/`useDevice`.
+3. **Site Editor**: Implementar `schema` estático.
+4. **Auto-Healing (CRÍTICO)**: 
+   - Ao criar um componente em um projeto de Storefront (onde o front-end é um app separado), o agente DEVE verificar se este app está listado como dependência no `manifest.json` do projeto de blocos (`store/`).
+   - Se não estiver, sugira a inclusão imediata para garantir que os blocos JSONC reconheçam a interface.
 
 ## Referência Obrigatória
+- `examples/storefront/custom-components/react/components/Breadcrumb/index.tsx`.
 
-Utilize o arquivo `examples/storefront/custom-components/react/components/Breadcrumb/index.tsx` como a única fonte de verdade para:
-- Estrutura de subcomponentes.
-- Implementação de `schema`.
-- Uso de hooks e utilitários (`examples/storefront/custom-components/utils/index.ts`).
-
-## Checklist de Validação
-
-- [ ] O componente está exportado corretamente na raiz de `react/`?
-- [ ] A interface está declarada em `store/interfaces.json`?
-- [ ] O `schema` do Site Editor está presente e funcional?
-- [ ] Todas as strings estão internacionalizadas com `react-intl`?
-- [ ] O componente utiliza `useCssHandles` para estilização?
+## Checklist
+- [ ] Exportado na raiz de `react/`?
+- [ ] Interface em `store/interfaces.json`?
+- [ ] `schema` e `react-intl` presentes?
+- [ ] Uso de `useCssHandles`?

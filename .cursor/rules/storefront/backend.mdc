@@ -6,61 +6,26 @@ alwaysApply: true
 
 # VTEX IO Backend Generation Workflow
 
-Diretrizes para criação de serviços robustos, performáticos e escaláveis seguindo o padrão Full Stack.
+Diretrizes para criação de serviços robustos e escaláveis no padrão Full Stack.
 
-## Restrições de Escopo e Destino
-
-- **Destino Obrigatório**: Todas as implementações devem ser criadas exclusivamente na pasta `node/` da raiz do projeto do usuário.
-- **Isolamento de Exemplos**: Utilize os arquivos em `examples/` apenas para consulta. **NUNCA** modifique arquivos dentro de `examples/`.
+## Destino Obrigatório
+- Todas as implementações em `node/`.
+- `examples/` apenas para consulta.
 
 ## Workflow de Geração (@new-service)
 
-Ao desenvolver novos serviços, a IA deve executar automaticamente este workflow de ponta a ponta:
-
-### 0. Consulta de API (Opcional - Recomendado)
-- Se a API VTEX for desconhecida ou complexa, utilize a skill `vtex-api-consultant` para buscar a documentação oficial em `developers.vtex.com`.
-- Extraia endpoints, headers de autenticação, parâmetros e estrutura de response.
-
-### 1. Camada de Clients (`node/clients/`)
-- **JanusClient**: Para APIs nativas da VTEX (ex: Checkout, OMS).
-- **ExternalClient**: Para APIs de terceiros.
-- **Implementação**: Definir a classe, o construtor com cabeçalhos de autenticação (`VtexIdclientAutCookie` ou `AppKey/AppToken`) e os métodos de API.
-- **Registro**: Adicionar o getter do novo client em `node/clients/index.ts`.
-
-### 2. Camada de Middlewares (`node/middlewares/`)
-- Criar um arquivo específico para a lógica do serviço.
-- **Lógica**: Consumir o client recém-criado, tratar o corpo da requisição (`co-body`) e implementar tratamento de erros (`try/catch`).
-- **Contexto**: Utilizar a tipagem `Context` global.
-
-### 3. Camada de Resolvers (`node/resolvers/`)
-- Criar resolvers específicos para Queries e Mutations.
-- **Exportação Centralizada**: Exportar todos os resolvers no arquivo `node/resolvers/index.ts`.
-- Consultar a estrutura de exportação e implementação nos exemplos referenciados.
-
-### 4. Configuração de Rotas (`node/service.json`)
-- Adicionar a nova rota ao objeto `routes`.
-- Definir o `path` (ex: `/_v/custom-api`) e a visibilidade (`public: true/false`).
-
-### 5. Orquestração do Serviço (`node/index.ts`)
-- Importar o novo middleware e/ou os resolvers.
-- **GraphQL**: Registrar os resolvers no objeto `graphql` do `Service`.
-- **Rotas**: Associar o middleware à rota correspondente no objeto `routes`.
-- Garantir que o `LRUCache` esteja configurado para o novo client se necessário.
+1. **Consulta de API**: Usar `vtex-api-consultant` para endpoints e auth.
+2. **Clients (`node/clients/`)**: `JanusClient` (VTEX) ou `ExternalClient` (Terceiros). Registrar em `node/clients/index.ts`.
+3. **Middlewares (`node/middlewares/`)**: Lógica de consumo, `co-body` e `try/catch`.
+4. **Resolvers (`node/resolvers/`)**: Queries/Mutations. Exportar em `node/resolvers/index.ts`.
+5. **Rotas (`node/service.json`)**: Definir `path` e `public`.
+6. **Orquestração (`node/index.ts`)**: Registrar resolvers e associar middlewares às rotas.
 
 ## Referência Obrigatória
+- `examples/storefront/back-end/node/`.
 
-Utilize os arquivos em `examples/storefront/back-end/node/` como a única fonte de verdade para:
-- **Clients**: `clients/checkout.ts` (Janus) e `clients/pricing.ts` (External).
-- **Middlewares**: `middlewares/attachments.ts` e `middlewares/pricing.ts`.
-- **Resolvers**: `resolvers/products.ts` e `resolvers/index.ts`.
-- **Configuração**: `index.ts` e `service.json`.
-
-## Checklist de Validação
-
-- [ ] O client está registrado em `node/clients/index.ts`?
-- [ ] O middleware implementa tratamento de erro e retorna status HTTP?
-- [ ] Os resolvers estão exportados em `node/resolvers/index.ts`?
-- [ ] O objeto `graphql` está configurado no `Service` em `node/index.ts`?
-- [ ] A rota está declarada em `node/service.json` com o path correto?
-- [ ] O middleware está associado à rota em `node/index.ts`?
-- [ ] Cabeçalhos de autenticação seguem o padrão do tipo de client?
+## Checklist
+- [ ] Client registrado em `index.ts`?
+- [ ] Middleware com `try/catch` e status HTTP?
+- [ ] Resolvers exportados?
+- [ ] Rota em `service.json` e associada em `index.ts`?
