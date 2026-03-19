@@ -1,106 +1,89 @@
-# Guia de Uso: VTEX Toolkit para Cursor
+# Guia de Uso: VTEX Toolkit CLI
 
-Este repositório contém um conjunto de regras (.mdc) e comandos otimizados para
-o Cursor, focados em acelerar o desenvolvimento no ecossistema VTEX (IO e
-FastStore).
+O **VTEX Toolkit** é um conjunto de regras inteligentes (.mdc), comandos e
+habilidades para o Cursor IDE, projetado para acelerar o desenvolvimento no
+ecossistema VTEX (IO e FastStore).
 
-## O que há de novo?
+## Instalação Rápida (Recomendado)
 
-A estrutura foi otimizada para máxima eficiência de tokens e segurança
-operacional:
+A forma mais simples de utilizar o toolkit em qualquer projeto é através da
+nossa CLI oficial. Não é necessário baixar o repositório manualmente.
 
-- **Otimização de Tokens**: Regras globais e de domínio reescritas para serem
-  puramente diretivas.
-- **Pasta `commands/`**: Atalhos rápidos com parâmetros definidos para todos os
-  workflows.
-- **Auto-Healing de Dependências**: Validação proativa de `manifest.json` ao
-  criar componentes.
-- **Site Editor Ready**: Garantia de títulos semânticos em todos os blocos
-  JSONC.
-- **Confirmação de Intenção**: O agente confirma ações complexas para evitar
-  gerações acidentais.
-
----
-
-## Estrutura do Repositório
-
-```text
-.cursor/rules/
-├── storefront/
-│   ├── blocks.mdc        - Templates de blocos (JSONC)
-│   ├── frontend.mdc      - Componentes React customizados
-│   ├── backend.mdc       - Serviços Node.js (Full Stack)
-│   ├── perf.mdc          - Checklist de performance (CWV)
-│   ├── styles.mdc        - CSS Modules e Design Tokens
-│   └── self-healing.mdc  - Auto-correção e integridade
-├── faststore/
-│   └── general.mdc       - Padrões FastStore (CMS, UI, GraphQL)
-└── global.mdc            - Orquestrador global de workflows
-
-commands/                 - Atalhos e parâmetros para comandos @new-*
-├── new-block.md
-├── new-component.md
-├── new-service.md
-├── new-faststore-cms.md
-├── new-faststore-components.md
-└── new-faststore-resolvers.md
-```
-
----
-
-## Como Usar no Cursor
-
-### Passo 1: Instalação no seu Projeto
-
-Para utilizar o toolkit, copie as pastas `.cursor/rules/` e `commands/` para a
-raiz do seu projeto:
+Abra o terminal na raiz do seu projeto e execute:
 
 ```bash
-cp -r .cursor/rules/ your-project/
-cp -r commands/ your-project/
+npx vtex-toolkit
 ```
 
-### Passo 2: Ativação
+Este comando irá:
 
-O Cursor reconhecerá as regras automaticamente. Utilize o símbolo `@` seguido do
-comando desejado no chat ou no Composer.
+1. Perguntar qual framework você está utilizando (**Storefront IO** ou
+   **FastStore**).
+2. Instalar as regras inteligentes em `.cursor/rules/`.
+3. Instalar as habilidades (skills) em `.cursor/skills/`.
+4. Instalar os atalhos de comandos em `commands/`.
 
 ---
 
-## Comandos Disponíveis
+## O que está incluído?
 
-### Storefront (VTEX IO)
+### 1. Regras Inteligentes (.mdc)
 
-- **`@new-storefront-block`**: Gera blocos JSONC com `title` semântico e
-  performance (LCP/CLS).
-- **`@new-storefront-component`**: Cria componentes React com `useCssHandles` e
-  auto-healing de `manifest.json`.
-- **`@new-storefront-service`**: Gera serviços Node.js (Client, Middleware,
-  Resolver) com suporte a CRUD.
+Localizadas em `.cursor/rules/`, elas ensinam ao Cursor os padrões técnicos da
+VTEX:
 
-### FastStore
+- **Storefront**: Blocks (JSONC), Frontend (React) e Backend (Node.js).
+- **FastStore**: CMS, Componentes (Atomic Design) e Resolvers GraphQL.
+- **Performance**: Checklists automáticos para Core Web Vitals (LCP, CLS).
+- **Self-Healing**: Diagnóstico e correção proativa de erros comuns.
 
-- **`@new-faststore-cms`**: Configura `content-types.json` e `sections.json`.
-- **`@new-faststore-components`**: Cria componentes/overrides seguindo Atomic
-  Design.
-- **`@new-faststore-resolvers`**: Implementa lógica GraphQL (TypeDefs e
-  Resolvers).
+### 2. Habilidades (Skills)
+
+Localizadas em `.cursor/skills/`, permitem que o agente consulte documentações
+oficiais:
+
+- `vtex-api-consultant`: Consulta de endpoints e autenticação de APIs VTEX.
+- `faststore-consultant`: Melhores práticas de componentes e CMS FastStore.
+
+### 3. Comandos Rápidos
+
+Localizados em `commands/`, servem como atalhos para os workflows `@new-*`.
+
+---
+
+## Como Usar
+
+Após a instalação, reinicie o seu **Cursor IDE**. Você pode ativar os workflows
+digitando `@` seguido do comando no chat ou Composer:
+
+### Comandos Storefront (VTEX IO)
+
+- `@new-storefront-block`: Gera blocos JSONC com títulos semânticos.
+- `@new-storefront-component`: Cria componentes React com auto-healing de
+  dependências.
+- `@new-storefront-service`: Desenvolve serviços Node.js completos (CRUD ready).
+
+### Comandos FastStore
+
+- `@new-faststore-cms`: Configura seções e tipos de conteúdo.
+- `@new-faststore-components`: Cria componentes e overrides.
+- `@new-faststore-resolvers`: Implementa lógica GraphQL e resolvers.
 
 ### Manutenção
 
-- **`@health`**: Varredura de integridade, referências (#) e performance.
-- **`@format`**: Executa `npm run format`.
-- **`@pr-ready`**: Prepara o PR (Health + Format + Resumo).
+- `@health`: Varredura de integridade e performance.
+- `@format`: Formatação de código via Prettier.
+- `@pr-ready`: Prepara o resumo e validações para o seu Pull Request.
 
 ---
 
 ## Boas Práticas e Segurança
 
-1. **Confirmação**: O agente pode pedir confirmação antes de criar múltiplos
-   arquivos de backend.
-2. **Referências**: A pasta `examples/` é a única fonte de verdade para padrões
-   de código.
-3. **Títulos**: Nunca remova a propriedade `title` dos blocos; ela é essencial
-   para o Site Editor.
-4. **Dependências**: O toolkit avisará se você esquecer de adicionar o app de
-   frontend no `manifest.json` do app de store.
+- **Confirmação de Intenção**: Para ações complexas, o agente pedirá sua
+  confirmação antes de gerar múltiplos arquivos.
+- **Referências Remotas**: As regras buscam exemplos de código diretamente do
+  nosso
+  [repositório oficial](https://github.com/carlosviniciusananias/vtex-toolkit),
+  garantindo que seu projeto permaneça leve.
+- **Site Editor**: Nunca remova a propriedade `title` dos blocos JSONC; ela é
+  vital para a experiência do lojista no admin.

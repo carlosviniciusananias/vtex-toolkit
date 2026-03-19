@@ -1,62 +1,91 @@
-# VTEX Rules
+# VTEX Toolkit
 
-O **VTEX Rules** é um repositório open source que fornece regras inteligentes
-(.mdc) para o Cursor IDE, projetadas para desenvolvedores que trabalham com o
-ecossistema VTEX (Storefront e FastStore).
+O **VTEX Toolkit** é um conjunto de regras inteligentes (.mdc), comandos e
+habilidades (skills) para o Cursor IDE, projetado para acelerar o
+desenvolvimento no ecossistema VTEX (IO e FastStore).
 
-## Objetivo
+## Instalação Rápida (Recomendado)
 
-Facilitar o desenvolvimento, garantir padrões de qualidade e acelerar a entrega
-de projetos VTEX através de automação e inteligência contextual no Cursor.
+Abra o terminal na raiz do seu projeto e execute:
 
-## Estrutura do Projeto
+```bash
+npx vtex-toolkit
+```
 
-- **`.cursor/rules/`**: Regras específicas para o Cursor divididas por framework
-  (Storefront, FastStore).
-- **`docs/`**: Documentação técnica detalhada sobre cada subtópico.
-- **`examples/`**: Exemplos de código prontos para uso e referência.
-
-## Frameworks Suportados
-
-### Storefront (VTEX IO)
-
-- **Blocks (JSONC)**: Estrutura de blocos, containers e componentes nativos.
-- **Frontend (React/TS)**: Componentes customizados, internacionalização e
-  Styleguide.
-- **Backend (Node/TS)**: Serviços, clients de API, GraphQL e middlewares.
-
-### FastStore
-
-- **CMS**: Configuração de Headless CMS (content-types, sections).
-- **Components**: Criação de componentes e overrides seguindo Atomic Design.
-- **Resolvers**: Lógica de dados, GraphQL e resolvers customizados.
-
-## Workflows de Geração
-
-O **VTEX Rules** automatiza a criação de recursos através de comandos
-específicos no Cursor:
-
-- `@new-storefront-block`: Criação de blocos JSONC para Storefront.
-- `@new-storefront-component`: Geração de componentes React para Storefront.
-- `@new-storefront-service`: Desenvolvimento de serviços Node.js (Full Stack).
-- `@new-faststore-cms`: Configuração de seções e tipos de conteúdo no CMS.
-- `@new-faststore-components`: Criação de componentes e overrides para
-  FastStore.
-- `@new-faststore-resolvers`: Implementação de lógica GraphQL para FastStore.
-
-## Começando
-
-Consulte o [Guia de Uso](docs/GUIA_DE_USO.md) para aprender como instalar e
-utilizar as regras no seu projeto.
-
-## Contribuindo
-
-Este é um projeto open source! Sinta-se à vontade para:
-
-1. Abrir Issues com sugestões ou bugs.
-2. Enviar Pull Requests com novas regras ou melhorias.
-3. Compartilhar com a comunidade.
+Este comando automatiza a instalação das regras, comandos e habilidades
+necessárias para o seu framework (Storefront ou FastStore).
 
 ---
 
-Desenvolvido para tornar o desenvolvimento VTEX mais inteligente e produtivo.
+## O que está incluído?
+
+### 1. Regras Inteligentes (.mdc)
+
+Localizadas em `.cursor/rules/`, elas ensinam ao Cursor os padrões técnicos da
+VTEX:
+
+- **Storefront**: Blocks (JSONC), Frontend (React) e Backend (Node.js).
+- **FastStore**: CMS, Componentes (Atomic Design) e Resolvers GraphQL.
+- **Performance**: Checklists automáticos para Core Web Vitals (LCP, CLS).
+- **Self-Healing**: Diagnóstico e correção proativa de erros comuns.
+
+### 2. Habilidades (Skills)
+
+Localizadas em `.cursor/skills/`, permitem que o agente consulte documentações
+oficiais:
+
+- `vtex-api-consultant`: Consulta de endpoints e autenticação de APIs VTEX.
+- `faststore-consultant`: Melhores práticas de componentes e CMS FastStore.
+
+### 3. Comandos Rápidos
+
+Localizados em `commands/`, servem como atalhos para os workflows `@new-*`.
+
+---
+
+## Como Usar
+
+Após a instalação, reinicie o seu **Cursor IDE**. Você pode ativar os workflows
+digitando `@` seguido do comando no chat ou Composer:
+
+### Comandos Storefront (VTEX IO)
+
+- `@new-storefront-block`: Gera blocos JSONC com títulos semânticos.
+- `@new-storefront-component`: Cria componentes React com auto-healing de
+  dependências.
+- `@new-storefront-service`: Desenvolve serviços Node.js completos (CRUD ready).
+
+### Comandos FastStore
+
+- `@new-faststore-cms`: Configura seções e tipos de conteúdo.
+- `@new-faststore-components`: Cria componentes e overrides.
+- `@new-faststore-resolvers`: Implementa lógica GraphQL e resolvers.
+
+### Manutenção
+
+- `@health`: Varredura de integridade e performance.
+- `@format`: Formatação de código via Prettier.
+- `@pr-ready`: Prepara o resumo e validações para o seu Pull Request.
+
+---
+
+## Boas Práticas e Segurança
+
+- **Confirmação de Intenção**: Para ações complexas, o agente pedirá sua
+  confirmação antes de gerar múltiplos arquivos.
+- **Referências Remotas**: As regras buscam exemplos de código diretamente do
+  nosso
+  [repositório oficial](https://github.com/carlosviniciusananias/vtex-toolkit),
+  garantindo que seu projeto permaneça leve.
+- **Site Editor**: Nunca remova a propriedade `title` dos blocos JSONC; ela é
+  vital para a experiência do lojista no admin.
+
+## 📖 Documentação Detalhada
+
+Consulte o [Guia de Uso](docs/GUIA_DE_USO.md) para mais detalhes sobre a
+instalação e workflows.
+
+## Contribuindo
+
+Este é um projeto open source! Sinta-se à vontade para abrir Issues ou Pull
+Requests.
