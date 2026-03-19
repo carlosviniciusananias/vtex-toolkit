@@ -1,0 +1,48 @@
+---
+description: Diretrizes para implementação de projetos FastStore, incluindo Headless CMS, Componentização e GraphQL.
+globs: ["cms/**", "src/**"]
+---
+
+# FastStore Implementation Workflow
+
+Diretrizes para desenvolvimento de lojas utilizando FastStore, focando em modularidade, extensibilidade e integração com Headless CMS.
+
+## Consulta de Boas Práticas (Opcional - Recomendado)
+- Antes de iniciar qualquer implementação complexa de Estilo, CMS ou Componentes, utilize a skill `.cursor/skills/faststore-consultant` para buscar as diretrizes oficiais em `developers.vtex.com`.
+
+## Comandos de Geração
+
+### @new-faststore-cms - Configuração de Headless CMS
+1.  **Localização**: Toda configuração deve ser feita na pasta `/cms` na raiz do projeto.
+2.  **Arquivos**:
+    - `cms/content-types.json`: Define a estrutura das páginas e configurações globais.
+    - `cms/sections.json`: Define os blocos de conteúdo que podem ser adicionados às páginas.
+3.  **Referências**: Basear-se em `https://raw.githubusercontent.com/carlosviniciusananias/vtex-toolkit/main/examples/faststore/cms/`.
+
+### @new-faststore-components - Criação de Componentes e Overrides
+1.  **Atomic Design**: Organizar componentes em `src/components/` (atomic, molecules, organisms).
+2.  **Overrides**: Customizações de componentes nativos em `src/components/overrides/` usando `SectionOverride`.
+3.  **Exportação**: Registrar obrigatoriamente em `src/components/index.tsx`.
+4.  **Referências**: Basear-se em `https://raw.githubusercontent.com/carlosviniciusananias/vtex-toolkit/main/examples/faststore/src/components/`.
+
+### @new-faststore-resolvers - Lógica de Dados e GraphQL
+1.  **Fragments**: Definir em `src/fragments/` para estender queries nativas.
+2.  **Resolvers**: Implementar em `src/graphql/vtex/resolvers/` e registrar no `index.ts` da pasta.
+3.  **TypeDefs**: Definir o esquema em `src/graphql/vtex/typeDefs/`.
+4.  **Referências**: Basear-se em `https://raw.githubusercontent.com/carlosviniciusananias/vtex-toolkit/main/examples/faststore/src/graphql/` e `src/fragments/`.
+
+## Referências Obrigatórias (Fonte de Verdade)
+
+Utilize os arquivos na pasta `https://raw.githubusercontent.com/carlosviniciusananias/vtex-toolkit/main/examples/faststore/` como única fonte de verdade:
+- **CMS**: `https://raw.githubusercontent.com/carlosviniciusananias/vtex-toolkit/main/examples/faststore/cms/content-types.json` e `sections.json`.
+- **Componentes**: `https://raw.githubusercontent.com/carlosviniciusananias/vtex-toolkit/main/examples/faststore/src/components/organisms/SEOText/index.tsx`.
+- **Overrides**: `https://raw.githubusercontent.com/carlosviniciusananias/vtex-toolkit/main/examples/faststore/src/components/overrides/Breadcrumb.tsx`.
+- **GraphQL**: `https://raw.githubusercontent.com/carlosviniciusananias/vtex-toolkit/main/examples/faststore/src/fragments/ServerProduct.ts` e `https://raw.githubusercontent.com/carlosviniciusananias/vtex-toolkit/main/examples/faststore/src/graphql/vtex/resolvers/warranty.ts`.
+
+## Checklist de Validação
+
+- [ ] O componente segue o padrão Atomic Design?
+- [ ] O componente está exportado em `src/components/index.tsx`?
+- [ ] As configurações de CMS estão refletidas em `cms/content-types.json` ou `cms/sections.json`?
+- [ ] Resolvers customizados estão registrados no `index.ts` de resolvers?
+- [ ] TypeDefs estão definidos para novas queries/mutations?

@@ -1,0 +1,29 @@
+---
+description: Diretivas para estilização CSS e uso de tokens no VTEX IO
+globs: ["styles/css/**/*.css", "styles/configs/style.json"]
+alwaysApply: true
+---
+
+# VTEX IO Styles Workflow
+
+Diretrizes para garantir CSS modular, performático e consistente.
+
+## Diretivas de Estilização
+
+Sempre siga estes padrões ao manipular estilos:
+
+1.  **Design Tokens**:
+    - Utilize variáveis CSS nativas (ex: `var(--action-primary)`) em vez de cores hexadecimais.
+    - Valide se a cor existe em `semanticColors` no arquivo `style.json`.
+2.  **Nomenclatura (blockClass)**:
+    - Utilize o padrão `{componente}{Contexto}--{modificador}` (ex: `buttonCTA--primary`).
+    - Evite nomes genéricos como `custom-class` ou `banner_1`.
+3.  **Responsividade**:
+    - Utilize sufixos Tachyons (`-ns`, `-m`, `-l`) para ajustes rápidos.
+    - Priorize a abordagem Mobile First em arquivos CSS customizados.
+
+## Checklist de Estilo
+
+- [ ] Todos os espaçamentos utilizam a escala definida (`var(--spacing-X)`).
+- [ ] Não há uso de `!important` desnecessário.
+- [ ] Tipografia segue os estilos pré-configurados do projeto.

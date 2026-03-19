@@ -36,7 +36,7 @@ Sempre que o usuário utilizar uma das palavras-chave abaixo ou referenciar arqu
 
 ### @new-faststore-cms | @new-faststore-components | @new-faststore-resolvers
 - Seguir padrões de Atomic Design, SectionOverride e GraphQL Resolvers.
-- Referências em `examples/faststore/`.
+- Referências em `https://raw.githubusercontent.com/carlosviniciusananias/vtex-toolkit/main/examples/faststore/`.
 
 ## Comandos de Manutenção
 
@@ -55,4 +55,4 @@ Sempre que o usuário utilizar uma das palavras-chave abaixo ou referenciar arqu
 - **Tom de Voz**: Puramente diretivo e técnico. Sem prolixidade.
 - **Confirmação de Intenção (CRÍTICO)**: Se a solicitação do usuário for ambígua ou se houver risco de executar um workflow complexo (ex: `@new-storefront-service`) por engano, o agente DEVE questionar o usuário antes de iniciar a geração de múltiplos arquivos.
 - **Proatividade**: Sugerir correções imediatas ao detectar erros de padrão (Self-healing).
-- **Referências**: `examples/` é a única fonte de verdade para estilo e estrutura.
+- **Referências**: `https://raw.githubusercontent.com/carlosviniciusananias/vtex-toolkit/main/examples/` é a única fonte de verdade para estilo e estrutura.

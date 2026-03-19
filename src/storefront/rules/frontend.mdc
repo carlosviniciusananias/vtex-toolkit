@@ -1,0 +1,30 @@
+---
+description: Diretivas operacionais para criação de componentes React no VTEX IO
+globs: ["react/**/*.tsx", "react/**/*.ts", "react/**/*.js"]
+alwaysApply: true
+---
+
+# VTEX IO Frontend Generation Workflow
+
+Padrões técnicos para novos componentes React.
+
+## Destino Obrigatório
+- Pasta `react/`. Componente em `react/components/{Nome}/index.tsx` e export em `react/{Nome}.tsx`.
+
+## Workflow de Geração (@new-component)
+
+1. **Configuração**: Declarar em `store/interfaces.json`. Usar `StoreFrontFC`.
+2. **Implementação**: `useCssHandles`, `react-intl`, `useRuntime`/`useDevice`.
+3. **Site Editor**: Implementar `schema` estático.
+4. **Auto-Healing (CRÍTICO)**: 
+   - Ao criar um componente em um projeto de Storefront (onde o front-end é um app separado), o agente DEVE verificar se este app está listado como dependência no `manifest.json` do projeto de blocos (`store/`).
+   - Se não estiver, sugira a inclusão imediata para garantir que os blocos JSONC reconheçam a interface.
+
+## Referência Obrigatória
+- `https://raw.githubusercontent.com/carlosviniciusananias/vtex-toolkit/main/examples/storefront/custom-components/react/components/Breadcrumb/index.tsx`.
+
+## Checklist
+- [ ] Exportado na raiz de `react/`?
+- [ ] Interface em `store/interfaces.json`?
+- [ ] `schema` e `react-intl` presentes?
+- [ ] Uso de `useCssHandles`?
