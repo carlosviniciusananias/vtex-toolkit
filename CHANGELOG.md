@@ -6,6 +6,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.1.1] - 2026-03-19
+
+### Fixed
+
+- **Pasta de Comandos**: Corrigido local de instalação da pasta `commands` para `.cursor/commands/`, evitando poluição na raiz do projeto.
+- **Referências de Regras**: Atualizados todos os caminhos nas regras `.mdc` para refletir o novo local da pasta de comandos.
+
 ## [0.1.0] - 2026-03-19
 
 ### Added
@@ -18,7 +25,7 @@ and this project adheres to
   Frontend, Backend, Performance e Self-healing.
 - **Habilidades de Consulta (Skills)**: Inclusão de `vtex-api-consultant` e
   `faststore-consultant` para suporte a APIs e documentação oficial.
-- **Pasta de Comandos**: Atalhos rápidos (`commands/`) para automação de
+- **Pasta de Comandos**: Atalhos rápidos (`.cursor/commands/`) para automação de
   workflows `@new-*`.
 - **Auto-Healing de Dependências**: Validação proativa de `manifest.json` para
   componentes React.

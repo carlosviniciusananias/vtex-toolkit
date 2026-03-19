@@ -78,7 +78,7 @@ oficiais em tempo real.
 
 ### 3. Comandos Rápidos
 
-Localizados em `commands/`, servem como atalhos para os workflows de geração.
+Localizados em `.cursor/commands/`, servem como atalhos para os workflows de geração.
 
 ---
 
