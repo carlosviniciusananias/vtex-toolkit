@@ -14,15 +14,19 @@ Diretrizes para criação de serviços robustos e escaláveis no padrão Full St
 
 ## Workflow de Geração (@new-service)
 
-1. **Consulta de API**: Usar skill `.cursor/skills/vtex-api-consultant` para endpoints e auth.
-2. **Clients (`node/clients/`)**: `JanusClient` (VTEX) ou `ExternalClient` (Terceiros). Registrar em `node/clients/index.ts`.
+1. **Consulta de API**: Usar `vtex-api-consultant` para endpoints e auth.
+2. **Clients (`node/clients/`)**: 
+   - `JanusClient` (VTEX) ou `ExternalClient` (Terceiros).
+   - Extensão de `MasterData` para métodos customizados.
+   - Registrar em `node/clients/index.ts`.
 3. **Middlewares (`node/middlewares/`)**: Lógica de consumo, `co-body` e `try/catch`.
 4. **Resolvers (`node/resolvers/`)**: Queries/Mutations. Exportar em `node/resolvers/index.ts`.
 5. **Rotas (`node/service.json`)**: Definir `path` e `public`.
 6. **Orquestração (`node/index.ts`)**: Registrar resolvers e associar middlewares às rotas.
+7. **Políticas de Acesso**: Se usar `ExternalClient`, garantir que o host esteja em `policies` no `manifest.json`.
 
 ## Referência Obrigatória
-- `https://raw.githubusercontent.com/carlosviniciusananias/vtex-toolkit/main/examples/storefront/back-end/node/`.
+- `examples/storefront/back-end/node/`.
 
 ## Checklist
 - [ ] Client registrado em `index.ts`?

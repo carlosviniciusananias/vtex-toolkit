@@ -27,6 +27,7 @@ Antes de finalizar qualquer tarefa, valide:
 - [ ] Todos os blocos com `#` estão definidos.
 - [ ] **Site Editor Ready**: Blocos editáveis possuem a propriedade `title` semântica.
 - [ ] Apps necessários estão listados em `dependencies` no `manifest.json`.
+- [ ] **Outbound Access**: Se houver um `ExternalClient`, o host deve estar nas `policies` do `manifest.json`.
 - [ ] **Cross-App Dependency**: Se um novo componente React foi criado, ele deve estar no `manifest.json` do app que define os blocos (`store/`).
 - [ ] Sintaxe JSONC está correta (sem vírgulas extras ou chaves abertas).
 - [ ] Props obrigatórias (ex: `height` em image-list) estão presentes.

@@ -13,9 +13,11 @@ Esta habilidade capacita o agente a consultar, extrair e aplicar conhecimentos d
 1. **Pesquisa**: Utilize `WebSearch` com termos específicos (ex: "VTEX Search API get product by id" ou "VTEX Orders API list orders").
 2. **Navegação**: Identifique a URL oficial no domínio `developers.vtex.com` e utilize `WebFetch` para ler o conteúdo da documentação.
 3. **Extração de Dados Críticos**:
-   - **Endpoint**: Método HTTP e Path (ex: `GET /api/catalog_system/pub/products/search`).
-   - **Autenticação**: Identificar se requer `VtexIdclientAutCookie`, `X-VTEX-API-AppKey` e `X-VTEX-API-AppToken`.
-   - **Parâmetros**: Query string e Path parameters obrigatórios.
+- **Endpoint**: Método HTTP e Path (ex: `GET /api/catalog_system/pub/products/search`).
+- **Autenticação**: Identificar se requer `VtexIdclientAutCookie`, `X-VTEX-API-AppKey` e `X-VTEX-API-AppToken`.
+- **MasterData**: Para extensões de MasterData, use o padrão de injetar headers de AppKey/AppToken quando necessário para bypass de permissões em contextos de storefront.
+- **ExternalClient**: Ao criar clientes para APIs fora do domínio VTEX, lembre-se de configurar as `policies` no `manifest.json`.
+- **Parâmetros**: Query string e Path parameters obrigatórios.
    - **Payload**: Estrutura do body para métodos POST/PUT/PATCH.
    - **Response**: Mapear os campos retornados para tipagem TypeScript.
 

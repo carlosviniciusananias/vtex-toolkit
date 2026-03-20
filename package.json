@@ -8,6 +8,7 @@
     "vtex-toolkit": "bin/init.js"
   },
   "scripts": {
+    "build": "node bin/sync-templates.js",
     "format": "prettier --write \"**/*.{md,mdc,json,jsonc,js,ts,tsx,css}\"",
     "format:check": "prettier --check \"**/*.{md,mdc,json,jsonc,js,ts,tsx,css}\""
   },
