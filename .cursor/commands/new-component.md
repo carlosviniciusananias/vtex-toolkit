@@ -13,4 +13,6 @@ Este comando automatiza a criação de componentes React no VTEX IO.
 3. **Interface**: Declaração em `store/interfaces.json`.
 
 ## Exemplo de Uso
-`@new-storefront-component name:MyBanner withSchema:true`
+`@new-storefront-component name:DiscountBadge withSchema:true "Crie um componente de selo de desconto que mostre a porcentagem de economia baseada no preço de lista e preço de venda do produto"`
+
+> **Importante**: Sempre forneça uma breve descrição da tarefa junto com o comando para que o agente saiba exatamente o que construir.
