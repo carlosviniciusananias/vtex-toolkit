@@ -15,13 +15,21 @@ Padrões técnicos para novos componentes React.
 
 1. **Configuração**: Declarar em `store/interfaces.json`. Usar `StoreFrontFC`.
 2. **Implementação**: `useCssHandles`, `react-intl`, `useRuntime`/`useDevice`.
-3. **Site Editor**: Implementar `schema` estático.
-4. **Auto-Healing (CRÍTICO)**: 
+3. **Contextos Nativos**: Utilizar hooks nativos quando necessário:
+   - `vtex.product-context` (`useProduct`): Dados do SKU/Produto.
+   - `vtex.product-context/ProductDispatchContext` (`useProductDispatch`): Manipulação do estado do produto.
+   - `vtex.order-items/OrderItems` (`useOrderItems`): Manipulação do carrinho (addItems).
+   - `vtex.order-manager` (`useOrderForm`): Dados do carrinho.
+   - `vtex.session-client` (`useRenderSession`): Dados da sessão/usuário.
+   - `vtex.render-runtime` (`useRuntime`): Navegação e contexto de execução.
+4. **Site Editor**: Implementar `schema` estático.
+5. **Auto-Healing (CRÍTICO)**: 
    - Ao criar um componente em um projeto de Storefront (onde o front-end é um app separado), o agente DEVE verificar se este app está listado como dependência no `manifest.json` do projeto de blocos (`store/`).
    - Se não estiver, sugira a inclusão imediata para garantir que os blocos JSONC reconheçam a interface.
 
 ## Referência Obrigatória
-- `examples/storefront/custom-components/react/components/Breadcrumb/index.tsx`.
+- `examples/storefront/custom-components/react/components/`.
+- Exemplos de contextos: `examples/storefront/custom-components/react/components/ProductContextExample/`.
 
 ## Checklist
 - [ ] Exportado na raiz de `react/`?

@@ -6,6 +6,22 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.2.0] - 2026-03-19
+
+### Added
+
+- **Exemplos Avançados de Front-end**: Inclusão de componentes práticos como `Discount` (cálculo de desconto via context), `Shelf` (integração com `order-items`) e `ProductDispatch` (manipulação de estado do SKU).
+- **Exemplos Avançados de Back-end**: Implementação de `ExternalClient` (ViaCEP), extensão customizada de `MasterData` e orquestração de Resolvers GraphQL.
+- **Integração de Contextos Nativos**: Exemplos reais de uso para `vtex.product-context`, `vtex.order-manager`, `vtex.session-client` e `vtex.render-runtime`.
+- **Arquitetura FastStore v3**: Estrutura de referência para componentes, seções do CMS e resolvers seguindo os padrões mais recentes do FastStore.
+
+### Improved
+
+- **Mapeamento CMS (FastStore)**: Regras agora forçam o mapeamento 1:1 entre o `name` da seção no CMS e o nome do componente React, prevenindo erros de renderização.
+- **Contexto em Comandos**: Todos os comandos `@new-*` foram otimizados para exigir uma descrição da tarefa, garantindo gerações de código mais precisas.
+- **Self-Healing de Políticas**: Validação automática de `outbound-access` no `manifest.json` ao detectar a criação de novos `ExternalClients`.
+- **Documentação**: Guia de uso e exemplos nos comandos atualizados para refletir os novos padrões de robustez.
+
 ## [0.1.1] - 2026-03-19
 
 ### Fixed

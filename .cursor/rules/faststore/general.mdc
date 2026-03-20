@@ -17,7 +17,8 @@ Diretrizes para desenvolvimento de lojas utilizando FastStore, focando em modula
 2.  **Arquivos**:
     - `cms/content-types.json`: Define a estrutura das páginas e configurações globais.
     - `cms/sections.json`: Define os blocos de conteúdo que podem ser adicionados às páginas.
-3.  **Referências**: Basear-se em `examples/faststore/cms/`.
+3.  **Mapeamento (CRÍTICO)**: O `name` definido em `sections.json` deve ser **exatamente igual** ao nome do componente React em `src/components/`. As propriedades do schema são passadas diretamente como props para o componente.
+4.  **Referências**: Basear-se em `examples/faststore/cms/`.
 
 ### @new-faststore-components - Criação de Componentes e Overrides
 1.  **Atomic Design**: Organizar componentes em `src/components/` (atomic, molecules, organisms).
@@ -41,6 +42,8 @@ Utilize os arquivos na pasta `examples/faststore/` como única fonte de verdade:
 
 ## Checklist de Validação
 
+- [ ] O nome da seção em `cms/sections.json` é idêntico ao nome do componente React?
+- [ ] As props do componente React refletem exatamente as propriedades definidas no schema do CMS?
 - [ ] O componente segue o padrão Atomic Design?
 - [ ] O componente está exportado em `src/components/index.tsx`?
 - [ ] As configurações de CMS estão refletidas em `cms/content-types.json` ou `cms/sections.json`?

@@ -14,4 +14,6 @@ Este comando automatiza a criação de blocos JSONC no VTEX IO.
 4. **Validation**: Verificação de referências (#).
 
 ## Exemplo de Uso
-`@new-storefront-block name:hero-home type:row preload:true`
+`@new-storefront-block name:hero-home type:row preload:true "Crie um banner principal para a home com imagem de fundo e um botão de CTA para a coleção de verão"`
+
+> **Importante**: Sempre forneça uma breve descrição da tarefa junto com o comando para que o agente saiba exatamente o que construir.

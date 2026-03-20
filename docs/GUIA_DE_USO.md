@@ -37,7 +37,18 @@ VTEX:
 - **Performance**: Checklists automáticos para Core Web Vitals (LCP, CLS).
 - **Self-Healing**: Diagnóstico e correção proativa de erros comuns.
 
-### 2. Habilidades (Skills)
+### 2. Padrões Avançados (Exemplos)
+
+O toolkit inclui exemplos práticos de implementações reais:
+
+- **Frontend**: Componentes de desconto dinâmico, prateleiras customizadas e
+  manipulação de contexto (`useProductDispatch`).
+- **Backend**: Consumo de APIs externas (ViaCEP), extensão de `MasterData` e
+  resolvers GraphQL.
+- **Contextos**: Integração profunda com `vtex.product-context`,
+  `vtex.order-manager` e `vtex.session-client`.
+
+### 3. Habilidades (Skills)
 
 Localizadas em `.cursor/skills/`, permitem que o agente consulte documentações
 oficiais:
@@ -47,7 +58,8 @@ oficiais:
 
 ### 3. Comandos Rápidos
 
-Localizados em `.cursor/commands/`, servem como atalhos para os workflows `@new-*`.
+Localizados em `.cursor/commands/`, servem como atalhos para os workflows
+`@new-*`.
 
 ---
 
@@ -56,18 +68,19 @@ Localizados em `.cursor/commands/`, servem como atalhos para os workflows `@new-
 Após a instalação, reinicie o seu **Cursor IDE**. Você pode ativar os workflows
 digitando `@` seguido do comando no chat ou Composer:
 
+> **Nota Importante**: Ao utilizar qualquer comando de geração (`@new-*`), sempre forneça uma breve descrição do que você deseja realizar. Se o comando for enviado sozinho, o agente solicitará mais informações antes de agir.
+
 ### Comandos Storefront (VTEX IO)
 
-- `@new-storefront-block`: Gera blocos JSONC com títulos semânticos.
-- `@new-storefront-component`: Cria componentes React com auto-healing de
-  dependências.
-- `@new-storefront-service`: Desenvolve serviços Node.js completos (CRUD ready).
+- `@new-storefront-block name:hero-home type:row preload:true "Crie um banner principal para a home com imagem de fundo e um botão de CTA para a coleção de verão"`
+- `@new-storefront-component name:DiscountBadge withSchema:true "Crie um componente de selo de desconto que mostre a porcentagem de economia baseada no preço de lista e preço de venda do produto"`
+- `@new-storefront-service name:inventory-api type:external crud:true "Crie um serviço para consultar o estoque em um ERP externo, incluindo autenticação via AppKey e tratamento de erros"`
 
 ### Comandos FastStore
 
-- `@new-faststore-cms`: Configura seções e tipos de conteúdo.
-- `@new-faststore-components`: Cria componentes e overrides.
-- `@new-faststore-resolvers`: Implementa lógica GraphQL e resolvers.
+- `@new-faststore-cms type:section name:NewsletterSection schema:true "Configure uma seção de newsletter para o CMS com campos para título, descrição e cor de fundo customizável"`
+- `@new-faststore-components name:ProductCard type:molecule "Crie um componente de card de produto seguindo o design system da loja, incluindo imagem, nome e preço com suporte a lazy loading"`
+- `@new-faststore-resolvers name:shippingQuotes type:query fragment:true "Implemente um resolver para buscar cotações de frete customizadas integrando com a API de logística da VTEX"`
 
 ### Manutenção
 

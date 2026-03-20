@@ -14,4 +14,6 @@ Este comando automatiza a criação de serviços Node.js (Full Stack) no VTEX IO
 4. **Service**: Configuração em `service.json` e `index.ts`.
 
 ## Exemplo de Uso
-`@new-storefront-service name:products type:janus crud:true`
+`@new-storefront-service name:inventory-api type:external crud:true "Crie um serviço para consultar o estoque em um ERP externo, incluindo autenticação e tratamento de erros"`
+
+> **Importante**: Sempre forneça uma breve descrição da tarefa junto com o comando para que o agente saiba exatamente o que construir.
