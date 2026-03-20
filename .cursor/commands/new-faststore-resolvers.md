@@ -13,4 +13,6 @@ Este comando automatiza a criação de lógica GraphQL (Resolvers e TypeDefs) na
 3. **Registry**: Registro no `index.ts` da pasta de resolvers.
 
 ## Exemplo de Uso
-`@new-faststore-resolvers name:productReviews type:query fragment:true`
+`@new-faststore-resolvers name:shippingQuotes type:query fragment:true "Implemente um resolver para buscar cotações de frete customizadas integrando com a API de logística da VTEX"`
+
+> **Importante**: Sempre forneça uma breve descrição da tarefa junto com o comando para que o agente saiba exatamente o que construir.

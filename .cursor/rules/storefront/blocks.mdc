@@ -13,16 +13,18 @@ Modularidade e integridade na geração de blocos.
 
 ## Workflow de Geração (@new-block)
 
-1. **Layout**: `flex-layout.row` -> `flex-layout.col`..
+1. **Layout**: `flex-layout.row` -> `flex-layout.col`. Utilizar `tab-layout`, `modal-layout` ou `condition-layout` para experiências avançadas.
 2. **Site Editor (CRÍTICO)**: 
    - **SEMPRE** incluir a propriedade `"title"` em blocos de nível superior ou componentes editáveis.
    - O título deve ser **semântico e contextual** (ex: `"title": "Banner Principal - Home"`, `"title": "Prateleira de Lançamentos"`).
    - Evitar títulos genéricos ou aleatórios.
 3. **Performance**: `preload: true` (LCP), `width`/`height` em imagens (CLS).
-4. **Modularização**: Subpastas para páginas complexas (ex: `store/blocks/home/`).
+4. **Modularização**: Subpastas para páginas complexas (ex: `store/blocks/home/`, `store/blocks/pdp/`, `store/blocks/search/`).
 
 ## Referência Obrigatória
-- `examples/storefront/store-theme`.
+- `examples/storefront/store-theme/store/blocks/`.
+- PDP: `examples/storefront/store-theme/store/blocks/pdp/product.jsonc`.
+- Search: `examples/storefront/store-theme/store/blocks/search/search.jsonc`.
 
 ## Validação (Mandatória)
 - [ ] Blocos com `#` declarados no arquivo ou em `common.jsonc`.

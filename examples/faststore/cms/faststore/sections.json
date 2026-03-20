@@ -14,5 +14,23 @@
         }
       }
     }
-  }
+  },
+  {
+    "name": "CustomSection",
+    "title": "Custom Section",
+    "schema": {
+      "type": "object",
+      "properties": {
+        "title": {
+          "type": "string",
+          "title": "Section Title"
+        },
+        "content": {
+          "type": "string",
+          "title": "Section Content",
+          "format": "markdown"
+        }
+      }
+    }
+  }  
 ]
