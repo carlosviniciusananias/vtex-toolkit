@@ -10,7 +10,7 @@ Diretrizes para detecção e correção proativa de inconsistências no ecossist
 
 ## Restrições de Escopo (CRÍTICO)
 
-- **NUNCA** aplique correções automáticas ou modificações em arquivos dentro das pastas `.cursor/` ou `examples/`.
+- **NUNCA** aplique correções automáticas ou modificações em arquivos dentro das pastas `.cursor/` ou `https://github.com/carlosviniciusananias/vtex-toolkit/tree/main/examples/`.
 - O diagnóstico e a autocorreção devem focar exclusivamente no código do projeto do usuário (ex: `react/`, `node/`, `store/`, `src/`).
 
 ## Workflow de Diagnóstico

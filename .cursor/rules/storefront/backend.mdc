@@ -10,7 +10,7 @@ Diretrizes para criação de serviços robustos e escaláveis no padrão Full St
 
 ## Destino Obrigatório
 - Todas as implementações em `node/`.
-- `examples/` apenas para consulta.
+- `https://github.com/carlosviniciusananias/vtex-toolkit/tree/main/examples/` apenas para consulta.
 
 ## Workflow de Geração (@new-service)
 
