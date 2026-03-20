@@ -1,3 +1,22 @@
+# 1.0.0 (2026-03-20)
+
+
+### Bug Fixes
+
+* add write permissions and correct env to release workflow ([4bcca69](https://github.com/carlosviniciusananias/vtex-toolkit/commit/4bcca69f0ebd3df04791ca0630c6a93b212e0693))
+* move commands folder to .cursor/commands and bump version to 0.1.1 ([b9414ad](https://github.com/carlosviniciusananias/vtex-toolkit/commit/b9414ad515f96f5559dd34a902154d9d21a51637))
+
+
+### Features
+
+* added auto healing and attrs in blocks ([6722faf](https://github.com/carlosviniciusananias/vtex-toolkit/commit/6722faf3e59cc653987500dac970049a3bd669ed))
+* added cli structure to project ([847fdae](https://github.com/carlosviniciusananias/vtex-toolkit/commit/847fdae35850870fcbbc4081fdcc7fc93a774361))
+* added cli structure to project ([4479e8c](https://github.com/carlosviniciusananias/vtex-toolkit/commit/4479e8ca33484080285bf1a28e7b4477b31bd83c))
+* added commands and new examples to project ([a5294aa](https://github.com/carlosviniciusananias/vtex-toolkit/commit/a5294aac3f16c50ded96f58d0778a663152c6497))
+* added skills to handling vtex docs ([f33d52d](https://github.com/carlosviniciusananias/vtex-toolkit/commit/f33d52d791e0889f5e19cb20e188d71efb0207fd))
+* expand examples, contexts and improve robustness rules ([0def543](https://github.com/carlosviniciusananias/vtex-toolkit/commit/0def543a1fa1631a699aa02af35c9c5dad84e298))
+* implement semantic release automation with github actions ([04ebc10](https://github.com/carlosviniciusananias/vtex-toolkit/commit/04ebc10ec50354c6667e52a6b438e492562dc7fa))
+
 # Changelog
 
 All notable changes to this project will be documented in this file.
