@@ -10,10 +10,10 @@ Regras de nível de projeto para automação de tarefas transversais, manutenç�
 
 ## Restrições de Escopo (CRÍTICO)
 
-- **NUNCA** crie ou modifique arquivos dentro das pastas `.cursor/` ou `examples/`.
+- **NUNCA** crie ou modifique arquivos dentro das pastas `.cursor/` ou `https://github.com/carlosviniciusananias/vtex-toolkit/tree/main/examples/`.
 - **NUNCA** altere a configuração do toolkit ou suas regras internas.
 - Implementações exclusivas nas pastas: `react/`, `node/`, `store/`, `src/`, `cms/`.
-- Arquivos em `examples/` são **APENAS** para referência.
+- Arquivos em `https://github.com/carlosviniciusananias/vtex-toolkit/tree/main/examples/` são **APENAS** para referência.
 
 ## Comandos Ativos de Geração
 
