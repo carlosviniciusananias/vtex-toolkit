@@ -1,6 +1,6 @@
 {
   "name": "vtex-toolkit",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Regras inteligentes para Cursor no ecossistema VTEX",
   "main": "index.js",
   "type": "module",
