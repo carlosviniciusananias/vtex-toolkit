@@ -22,9 +22,9 @@ Modularidade e integridade na geração de blocos.
 4. **Modularização**: Subpastas para páginas complexas (ex: `store/blocks/home/`, `store/blocks/pdp/`, `store/blocks/search/`).
 
 ## Referência Obrigatória
-- `examples/storefront/store-theme/store/blocks/`.
-- PDP: `examples/storefront/store-theme/store/blocks/pdp/product.jsonc`.
-- Search: `examples/storefront/store-theme/store/blocks/search/search.jsonc`.
+- `https://raw.githubusercontent.com/carlosviniciusananias/vtex-toolkit/main/examples/storefront/store-theme/store/blocks/`.
+- PDP: `https://raw.githubusercontent.com/carlosviniciusananias/vtex-toolkit/main/examples/storefront/store-theme/store/blocks/pdp/product.jsonc`.
+- Search: `https://raw.githubusercontent.com/carlosviniciusananias/vtex-toolkit/main/examples/storefront/store-theme/store/blocks/search/search.jsonc`.
 
 ## Validação (Mandatória)
 - [ ] Blocos com `#` declarados no arquivo ou em `common.jsonc`.

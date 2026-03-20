@@ -28,8 +28,8 @@ Padrões técnicos para novos componentes React.
    - Se não estiver, sugira a inclusão imediata para garantir que os blocos JSONC reconheçam a interface.
 
 ## Referência Obrigatória
-- `examples/storefront/custom-components/react/components/`.
-- Exemplos de contextos: `examples/storefront/custom-components/react/components/ProductContextExample/`.
+- `https://raw.githubusercontent.com/carlosviniciusananias/vtex-toolkit/main/examples/storefront/custom-components/react/components/`.
+- Exemplos de contextos: `https://raw.githubusercontent.com/carlosviniciusananias/vtex-toolkit/main/examples/storefront/custom-components/react/components/ProductContextExample/`.
 
 ## Checklist
 - [ ] Exportado na raiz de `react/`?

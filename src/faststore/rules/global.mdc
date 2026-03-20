@@ -37,7 +37,7 @@ Sempre que o usuário utilizar uma das palavras-chave abaixo ou referenciar arqu
 ### @new-faststore-cms | @new-faststore-components | @new-faststore-resolvers
 - Seguir padrões de Atomic Design, SectionOverride e GraphQL Resolvers.
 - **Mapeamento CMS (CRÍTICO)**: O nome da seção em `sections.json` deve ser idêntico ao nome do componente React, e as propriedades do schema devem corresponder às props do componente.
-- Referências em `examples/faststore/`.
+- **Referências**: `https://raw.githubusercontent.com/carlosviniciusananias/vtex-toolkit/main/examples/faststore/`.
 
 ## Comandos de Manutenção
 
@@ -57,4 +57,4 @@ Sempre que o usuário utilizar uma das palavras-chave abaixo ou referenciar arqu
 - **Descrição de Tarefa (OBRIGATÓRIO)**: Se o usuário enviar um comando de geração (ex: `@new-storefront-block`) sem uma descrição clara do que deseja ou sem os parâmetros necessários, o agente **NÃO DEVE** executar nenhuma ação. Em vez disso, deve solicitar educadamente uma breve descrição da tarefa.
 - **Confirmação de Intenção (CRÍTICO)**: Se a solicitação do usuário for ambígua ou se houver risco de executar um workflow complexo (ex: `@new-storefront-service`) por engano, o agente DEVE questionar o usuário antes de iniciar a geração de múltiplos arquivos.
 - **Proatividade**: Sugerir correções imediatas ao detectar erros de padrão (Self-healing).
-- **Referências**: `examples/` é a única fonte de verdade para estilo e estrutura.
+- **Referências**: `https://raw.githubusercontent.com/carlosviniciusananias/vtex-toolkit/main/examples/` é a única fonte de verdade para estilo e estrutura.

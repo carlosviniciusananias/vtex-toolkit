@@ -26,7 +26,7 @@ Diretrizes para criação de serviços robustos e escaláveis no padrão Full St
 7. **Políticas de Acesso**: Se usar `ExternalClient`, garantir que o host esteja em `policies` no `manifest.json`.
 
 ## Referência Obrigatória
-- `examples/storefront/back-end/node/`.
+- `https://raw.githubusercontent.com/carlosviniciusananias/vtex-toolkit/main/examples/storefront/back-end/node/`.
 
 ## Checklist
 - [ ] Client registrado em `index.ts`?
