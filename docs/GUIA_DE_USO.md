@@ -92,6 +92,16 @@ digitando `@` seguido do comando no chat ou Composer:
 
 ## Boas Práticas e Segurança
 
+### Padronização de Commits (Semantic Release)
+
+Para garantir o versionamento automático e a publicação no NPM, este projeto utiliza **Conventional Commits**. Ao contribuir, utilize os seguintes prefixos:
+
+- `feat:` -> Para novas funcionalidades (gera versão **MINOR**).
+- `fix:` -> Para correções de bugs (gera versão **PATCH**).
+- `chore:` -> Para tarefas de manutenção que não alteram o código (sem release).
+- `docs:` -> Para alterações apenas em documentação (sem release).
+- `BREAKING CHANGE:` no corpo do commit -> Para mudanças que quebram compatibilidade (gera versão **MAJOR**).
+
 - **Confirmação de Intenção**: Para ações complexas, o agente pedirá sua
   confirmação antes de gerar múltiplos arquivos.
 - **Referências Remotas**: As regras buscam exemplos de código diretamente do
