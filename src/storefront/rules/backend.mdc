@@ -8,6 +8,9 @@ alwaysApply: true
 
 Diretrizes para criação de serviços robustos e escaláveis no padrão Full Stack.
 
+> [!IMPORTANT]
+> **PROIBIDO** consultar APIs externas ou Skills antes de validar a estrutura nos exemplos oficiais em "Referência Obrigatória".
+
 ## Destino Obrigatório
 - Todas as implementações em `node/`.
 - `https://github.com/carlosviniciusananias/vtex-toolkit/tree/main/examples/` apenas para consulta.

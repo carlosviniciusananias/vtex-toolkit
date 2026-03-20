@@ -2,6 +2,12 @@
 
 Esta habilidade capacita o agente a consultar, extrair e aplicar conhecimentos da documentação oficial de APIs da VTEX (https://developers.vtex.com/docs/api-reference) para a construção de Clients, Middlewares e Resolvers.
 
+## Restrições de Uso (IMPORTANTE)
+
+- Esta Skill é um recurso **secundário**.
+- **NUNCA** utilize esta Skill para definir o padrão arquitetural ou estrutural do código. Esses padrões pertencem exclusivamente às **Regras (.mdc)** e aos **Exemplos Oficiais**.
+- Utilize esta Skill **APENAS** para sanar dúvidas técnicas sobre endpoints específicos, parâmetros de autenticação ou estruturas de payload que não estejam claras nos exemplos.
+
 ## Quando Usar
 
 - Ao criar um novo `JanusClient` ou `ExternalClient` para uma API VTEX.

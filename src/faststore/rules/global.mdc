@@ -8,6 +8,15 @@ alwaysApply: true
 
 Regras de nível de projeto para automação de tarefas transversais, manutenção de padrões e geração de código.
 
+## Fluxo de Trabalho Obrigatório (CRÍTICO)
+
+Sempre que um comando de geração for acionado (ex: `@new-storefront-*`), o agente DEVE seguir esta ordem rigorosa:
+
+1.  **Análise de Exemplos (Mandatório)**: Antes de qualquer ação, acesse as URLs em "Referências" para ler e analisar o padrão estrutural e de código nos exemplos oficiais do GitHub.
+2.  **Planejamento**: Proponha a implementação baseada estritamente nos padrões encontrados nos exemplos.
+3.  **Consulta Técnica (Opcional)**: Utilize as Skills (ex: `vtex-api-consultant`) APENAS se houver dúvidas sobre detalhes técnicos específicos (endpoints, auth, payloads) que não estejam claros nos exemplos.
+4.  **Implementação**: Execute a geração do código seguindo o plano aprovado.
+
 ## Restrições de Escopo (CRÍTICO)
 
 - **NUNCA** crie ou modifique arquivos dentro das pastas `.cursor/` ou `examples/`.

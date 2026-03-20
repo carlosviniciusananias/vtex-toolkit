@@ -8,6 +8,9 @@ alwaysApply: true
 
 Padrões técnicos para novos componentes React.
 
+> [!IMPORTANT]
+> **PROIBIDO** consultar documentações externas ou Skills antes de validar o padrão de implementação nos exemplos oficiais em "Referência Obrigatória".
+
 ## Destino Obrigatório
 - Pasta `react/`. Componente em `react/components/{Nome}/index.tsx` e export em `react/{Nome}.tsx`.
 
