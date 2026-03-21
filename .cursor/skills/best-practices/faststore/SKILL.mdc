@@ -1,0 +1,1059 @@
+---
+name: faststore-best-practices
+description: >
+  Validar e guiar implementação de projetos FastStore:
+  - Estrutura de pastas Next.js (src/components, src/pages)
+  - Nomenclatura de componentes e sections
+  - Server Components vs Client Components
+  - Otimização de imagens e Core Web Vitals
+  - GraphQL queries e caching
+  - Analytics e tracking
+  Trigger: durante desenvolvimento FastStore, criação de sections, componentes Next.js, ou menções a "FastStore", "otimização", "performance"
+---
+
+# FastStore Best Practices
+
+Padrões oficiais baseados no playground.store da VTEX para desenvolvimento de componentes e sections no FastStore (Next.js 13+).
+
+## Índice
+1. [Estrutura de Projeto](#estrutura)
+2. [Nomenclatura e Organização](#nomenclatura)
+3. [Componentes e Sections](#componentes)
+4. [Hooks do FastStore](#hooks)
+5. [Estilização (SCSS Modules)](#estilizacao)
+6. [GraphQL e Fragments](#graphql)
+7. [Analytics e Tracking](#analytics)
+8. [Performance e Core Web Vitals](#performance)
+
+---
+
+## 1. Estrutura de Projeto {#estrutura}
+
+### Estrutura Padrão FastStore
+
+```
+faststore-project/
+├── src/
+│   ├── components/              # Componentes reutilizáveis
+│   │   ├── BuyButtonWithDetails/
+│   │   │   ├── BuyButtonWithDetails.tsx
+│   │   │   └── buy-button-with-details.module.scss
+│   │   ├── ContactForm/
+│   │   │   ├── ContactForm.tsx
+│   │   │   └── contact-form.module.scss
+│   │   └── index.tsx           # Re-exports de componentes
+│   ├── components/sections/     # Sections customizadas
+│   │   ├── CustomNewsletter/
+│   │   │   ├── CustomNewsletter.tsx
+│   │   │   └── section.module.scss
+│   │   ├── AlertWithImage/
+│   │   │   ├── AlertWithImage.tsx
+│   │   │   └── section.module.scss
+│   │   └── CustomProductDetails/
+│   │       ├── CustomProductDetails.tsx
+│   │       └── section.module.scss
+│   ├── fragments/               # GraphQL fragments
+│   │   ├── ProductFragment.graphql
+│   │   └── ClientFragment.graphql
+│   ├── graphql/                 # Queries GraphQL
+│   │   └── queries.graphql
+│   ├── scripts/                 # Scripts customizados
+│   │   └── ThirdPartyScripts.tsx
+│   ├── themes/                  # Temas e tokens de design
+│   │   └── custom-theme.scss
+│   └── utils/                   # Funções utilitárias
+│       ├── priceFormatter.ts
+│       └── validators.ts
+├── cms/
+│   └── faststore/               # Configurações do CMS
+│       └── sections.json
+├── discovery.config.js          # Configurações do Discovery
+├── package.json
+├── next.config.js
+└── tsconfig.json
+```
+
+### package.json
+
+```json
+{
+  "name": "starter.store",
+  "version": "0.22.0",
+  "private": true,
+  "scripts": {
+    "dev": "faststore dev",
+    "build": "faststore build",
+    "start": "faststore start",
+    "cms-sync": "faststore cms-sync",
+    "test": "faststore test"
+  },
+  "dependencies": {
+    "@faststore/cli": "^3.96.4",
+    "next": "^13.5.6",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  },
+  "devDependencies": {
+    "typescript": "^4.9.4"
+  }
+}
+```
+
+---
+
+## 2. Nomenclatura e Organização {#nomenclatura}
+
+### Componentes
+
+**Padrão:** PascalCase com pasta e arquivo de mesmo nome
+
+```
+CORRETO:
+src/components/
+├── BuyButtonWithDetails/
+│   ├── BuyButtonWithDetails.tsx
+│   └── buy-button-with-details.module.scss
+├── ContactForm/
+│   ├── ContactForm.tsx
+│   └── contact-form.module.scss
+
+INCORRETO:
+src/components/
+├── buyButtonWithDetails/       # camelCase na pasta
+│   ├── button.tsx              # Nome não corresponde
+│   └── styles.scss             # Nome genérico
+```
+
+### Sections
+
+**Padrão:** PascalCase com prefixo "Custom" (opcional) e pasta dedicada
+
+```
+CORRETO:
+src/components/sections/
+├── CustomNewsletter/
+│   ├── CustomNewsletter.tsx
+│   └── section.module.scss
+├── AlertWithImage/
+│   ├── AlertWithImage.tsx
+│   └── section.module.scss
+
+INCORRETO:
+src/components/sections/
+├── newsletter/                 # lowercase
+│   ├── Newsletter.tsx
+│   └── newsletter.scss         # Sem .module
+```
+
+### Arquivos de Estilo
+
+**Padrão:** kebab-case com `.module.scss`
+
+```
+CORRETO:
+- buy-button-with-details.module.scss
+- section.module.scss
+- contact-form.module.scss
+
+INCORRETO:
+- BuyButtonWithDetails.scss (PascalCase, sem .module)
+- styles.scss (genérico, sem .module)
+- buyButton.scss (camelCase, sem .module)
+```
+
+---
+
+## 3. Componentes e Sections {#componentes}
+
+### Componente Básico
+
+```typescript
+// CORRETO - src/components/BuyButtonWithDetails/BuyButtonWithDetails.tsx
+import { usePDP } from "@faststore/core"
+import { Button as UIButton, ButtonProps } from "@faststore/ui"
+import { priceFormatter } from "../../utils/priceFormatter"
+
+import styles from "./buy-button-with-details.module.scss"
+
+export function BuyButtonWithDetails(props: ButtonProps) {
+  // Acessar contexto PDP
+  const context = usePDP()
+
+  // Lógica de negócio
+  const installment = context?.data?.product?.availableInstallments[0]
+  const interestFree = installment?.installmentInterest === 0 ?? false
+
+  return (
+    <section className={styles.buyButtonWithDetails}>
+      {interestFree && (
+        <span>
+          {`${installment.installmentNumber} interest-free installment(s)`}
+          <br />
+          {`of ${priceFormatter(installment.installmentValue)} with ${
+            installment.installmentPaymentSystemName
+          }`}
+        </span>
+      )}
+
+      <UIButton {...props} variant="primary">
+        Buy Button
+      </UIButton>
+    </section>
+  )
+}
+
+export default BuyButtonWithDetails
+```
+
+### Section Customizada com Props Tipadas
+
+```typescript
+// CORRETO - src/components/sections/CustomNewsletter/CustomNewsletter.tsx
+import type {
+  ToastProps,
+  NewsletterAddendumProps as UINewsletterAddendumProps,
+  NewsletterHeaderProps as UINewsletterHeaderProps,
+  NewsletterProps as UINewsletterProps,
+} from "@faststore/ui"
+import { useUI } from "@faststore/ui"
+import styles from "./section.module.scss"
+
+import {
+  Button,
+  Icon,
+  InputField,
+  Newsletter,
+  NewsletterAddendum,
+  NewsletterContent,
+  NewsletterForm,
+  NewsletterHeader,
+} from "@faststore/ui"
+
+import { Section } from "@faststore/core"
+import { useNewsletter_unstable as useNewsletter } from "@faststore/core/experimental"
+import { type FormEvent, useRef } from "react"
+
+type SubscribeMessage = {
+  icon: string
+  title: string
+  message: string
+}
+
+export interface NewsletterProps {
+  /**
+   * Title for the section.
+   */
+  title: UINewsletterHeaderProps["title"]
+  /**
+   * The card Variant
+   */
+  card?: UINewsletterProps["card"]
+  /**
+   * Specifies the component's color variant combination.
+   */
+  colorVariant?: UINewsletterProps["colorVariant"]
+  /**
+   * A description for the section.
+   */
+  description?: UINewsletterHeaderProps["description"]
+  /**
+   * The Privacy Policy disclaimer.
+   */
+  privacyPolicy?: UINewsletterAddendumProps["addendum"]
+  /**
+   * The email input label.
+   */
+  emailInputLabel?: string
+  /**
+   * The name input visibility.
+   */
+  displayNameInput?: boolean
+  /**
+   * Icon for the section.
+   */
+  icon: {
+    alt: string
+    icon: string
+  }
+  /**
+   * The name input label.
+   */
+  nameInputLabel?: string
+  /**
+   * The subscribe button label.
+   */
+  subscribeButtonLabel?: string
+  /**
+   * The subscribe button loading label.
+   */
+  subscribeButtonLoadingLabel?: string
+  /**
+   * Toast attributes for successful subscriptions.
+   */
+  toastSubscribe?: SubscribeMessage
+  /**
+   * Toast attributes for unsuccessful subscriptions.
+   */
+  toastSubscribeError?: SubscribeMessage
+}
+
+function CustomNewsletter({
+  icon: { icon, alt: iconAlt },
+  title,
+  description,
+  privacyPolicy,
+  emailInputLabel,
+  displayNameInput,
+  nameInputLabel,
+  subscribeButtonLabel,
+  subscribeButtonLoadingLabel,
+  card,
+  toastSubscribe,
+  toastSubscribeError,
+  colorVariant,
+  ...otherProps
+}: NewsletterProps) {
+  const { pushToast } = useUI()
+  const { subscribeUser, loading } = useNewsletter()
+
+  const formRef = useRef<HTMLFormElement>(null)
+  const nameInputRef = useRef<HTMLInputElement>(null)
+  const emailInputRef = useRef<HTMLInputElement>(null)
+
+  const onSubmit = async (event: FormEvent) => {
+    event.preventDefault()
+
+    try {
+      const data = await subscribeUser({
+        data: {
+          name: nameInputRef.current?.value ?? "",
+          email: emailInputRef.current?.value ?? "",
+        },
+      })
+
+      if (data?.subscribeToNewsletter?.id) {
+        pushToast({
+          ...toastSubscribe,
+          status: "INFO",
+          icon: (
+            <Icon width={30} height={30} name={toastSubscribe?.icon ?? ""} />
+          ),
+        } as ToastProps)
+
+        formRef?.current?.reset()
+      }
+    } catch (error) {
+      pushToast({
+        ...toastSubscribeError,
+        status: "ERROR",
+        icon: (
+          <Icon width={30} height={30} name={toastSubscribeError?.icon ?? ""} />
+        ),
+      } as ToastProps)
+    }
+  }
+
+  return (
+    <Section className={`${styles.section} section-newsletter layout__section`}>
+      <Newsletter card={card ?? false} colorVariant={colorVariant}>
+        <NewsletterForm ref={formRef} onSubmit={onSubmit}>
+          <NewsletterHeader
+            title={title}
+            description={description}
+            icon={
+              <Icon width={32} height={32} name={icon} aria-label={iconAlt} />
+            }
+          />
+
+          <NewsletterContent>
+            {displayNameInput && (
+              <InputField
+                id="newsletter-name"
+                required
+                label={nameInputLabel ?? "Name"}
+                inputRef={nameInputRef}
+              />
+            )}
+            <InputField
+              id="newsletter-email"
+              type="email"
+              required
+              label={emailInputLabel ?? "Email"}
+              inputRef={emailInputRef}
+            />
+            <NewsletterAddendum addendum={privacyPolicy} />
+            <Button variant="secondary" inverse type="submit">
+              {loading ? subscribeButtonLoadingLabel : subscribeButtonLabel}
+            </Button>
+          </NewsletterContent>
+        </NewsletterForm>
+      </Newsletter>
+    </Section>
+  )
+}
+
+export default CustomNewsletter
+```
+
+---
+
+## 4. Hooks do FastStore {#hooks}
+
+### Hooks Principais
+
+```typescript
+// CORRETO - Usando hooks do FastStore Core
+
+// 1. usePDP - Dados da página de produto
+import { usePDP } from "@faststore/core"
+
+const ProductDetails = () => {
+  const context = usePDP()
+  const product = context?.data?.product
+  
+  console.log("Product:", product)
+  console.log("Available Installments:", product?.availableInstallments)
+  
+  return <div>{product?.name}</div>
+}
+
+// 2. useSession - Dados da sessão do usuário
+import { useSession } from "@faststore/sdk"
+
+const UserInfo = () => {
+  const { session } = useSession()
+  
+  console.log("Channel:", session?.channel)
+  console.log("Country:", session?.country)
+  console.log("Locale:", session?.locale)
+  
+  return <div>User: {session?.person?.email}</div>
+}
+
+// 3. useCart - Carrinho de compras
+import { useCart } from "@faststore/sdk"
+
+const CartInfo = () => {
+  const { items, totalItems, totalPrice } = useCart()
+  
+  return (
+    <div>
+      <p>Items: {totalItems}</p>
+      <p>Total: ${totalPrice}</p>
+    </div>
+  )
+}
+
+// 4. useBuyButton - Adicionar ao carrinho
+import { useBuyButton } from "@faststore/sdk"
+
+const AddToCartButton = ({ productId, seller }: Props) => {
+  const buyButtonProps = useBuyButton({
+    id: productId,
+    seller: seller,
+    price: 99.99,
+    listPrice: 129.99,
+    quantity: 1,
+  })
+  
+  return <button {...buyButtonProps}>Add to Cart</button>
+}
+
+// 5. useUI - Toast notifications e UI state
+import { useUI } from "@faststore/ui"
+
+const NotificationExample = () => {
+  const { pushToast } = useUI()
+  
+  const showSuccess = () => {
+    pushToast({
+      title: "Success!",
+      message: "Item added to cart",
+      status: "INFO",
+    })
+  }
+  
+  return <button onClick={showSuccess}>Show Toast</button>
+}
+
+// 6. useNewsletter - Newsletter subscription
+import { useNewsletter_unstable as useNewsletter } from "@faststore/core/experimental"
+
+const NewsletterForm = () => {
+  const { subscribeUser, loading } = useNewsletter()
+  
+  const handleSubmit = async (email: string) => {
+    await subscribeUser({
+      data: { email }
+    })
+  }
+  
+  return <form>...</form>
+}
+```
+
+---
+
+## 5. Estilização (SCSS Modules) {#estilizacao}
+
+### SCSS Modules
+
+```scss
+// CORRETO - buy-button-with-details.module.scss
+.buyButtonWithDetails {
+  display: flex;
+  flex-direction: column;
+  gap: var(--fs-spacing-2);
+  padding: var(--fs-spacing-3);
+  
+  span {
+    font-size: var(--fs-text-size-1);
+    color: var(--fs-color-text-light);
+    line-height: 1.5;
+  }
+  
+  button {
+    width: 100%;
+    margin-top: var(--fs-spacing-2);
+  }
+}
+
+// Modificador para variante
+.buyButtonWithDetails--compact {
+  padding: var(--fs-spacing-1);
+  gap: var(--fs-spacing-1);
+}
+
+// Media queries
+@media (min-width: 768px) {
+  .buyButtonWithDetails {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    
+    button {
+      width: auto;
+      margin-top: 0;
+    }
+  }
+}
+```
+
+### Variáveis de Design Tokens
+
+```scss
+// CORRETO - Usando tokens do FastStore
+.section {
+  // Spacing
+  padding: var(--fs-spacing-5);
+  margin-bottom: var(--fs-spacing-8);
+  gap: var(--fs-spacing-3);
+  
+  // Colors
+  background-color: var(--fs-color-neutral-bkg);
+  color: var(--fs-color-text);
+  border: 1px solid var(--fs-border-color);
+  
+  // Typography
+  font-size: var(--fs-text-size-2);
+  font-weight: var(--fs-text-weight-regular);
+  line-height: var(--fs-text-line-height);
+  
+  // Border radius
+  border-radius: var(--fs-border-radius);
+  
+  // Transitions
+  transition: var(--fs-transition-timing);
+}
+
+// INCORRETO - Valores hardcoded
+.section {
+  padding: 20px;              // Usar var(--fs-spacing-5)
+  background-color: #f5f5f5;  // Usar var(--fs-color-neutral-bkg)
+  font-size: 16px;            // Usar var(--fs-text-size-2)
+}
+```
+
+---
+
+## 6. GraphQL e Fragments {#graphql}
+
+### Fragments
+
+```graphql
+# CORRETO - src/fragments/ProductFragment.graphql
+fragment ProductFragment on StoreProduct {
+  id: productID
+  slug
+  sku
+  brand {
+    brandName
+    name
+  }
+  name
+  gtin
+  description
+  
+  isVariantOf {
+    productGroupID
+    name
+  }
+  
+  image {
+    url
+    alternateName
+  }
+  
+  offers {
+    lowPrice
+    offers {
+      availability
+      price
+      listPrice
+      seller {
+        identifier
+      }
+    }
+  }
+  
+  # Campos adicionais customizados
+  availableInstallments {
+    installmentNumber
+    installmentValue
+    installmentInterest
+    installmentPaymentSystemName
+  }
+}
+```
+
+### Queries
+
+```graphql
+# CORRETO - src/graphql/queries.graphql
+query ProductDetailsQuery($slug: String!) {
+  product(locator: [{ key: "slug", value: $slug }]) {
+    ...ProductFragment
+  }
+}
+
+query SearchQuery($first: Int!, $after: String, $term: String!) {
+  search(
+    first: $first
+    after: $after
+    sort: score_desc
+    term: $term
+  ) {
+    products {
+      pageInfo {
+        totalCount
+      }
+      edges {
+        node {
+          ...ProductFragment
+        }
+      }
+    }
+  }
+}
+```
+
+---
+
+## 7. Analytics e Tracking {#analytics}
+
+### Eventos de Analytics
+
+```typescript
+// CORRETO - Usando FastStore Analytics
+import { sendAnalyticsEvent, useAnalyticsEvent } from "@faststore/sdk"
+
+// 1. Analytics Handler (ouvir todos os eventos)
+export const AnalyticsHandler = () => {
+  useAnalyticsEvent((event) => {
+    console.log("Analytics Event:", event)
+    
+    // Enviar para Google Analytics, Meta Pixel, etc.
+  })
+
+  return null
+}
+
+// 2. Enviar eventos customizados
+const CustomNewsletter = () => {
+  const handleSubmit = async (email: string) => {
+    // Evento de início
+    sendAnalyticsEvent({
+      name: "Submit Newsletter",
+      params: {
+        form_location: "custom_newsletter_section",
+        user_agent: navigator.userAgent,
+      },
+    })
+    
+    try {
+      await subscribeUser({ email })
+      
+      // Evento de sucesso
+      sendAnalyticsEvent({
+        name: "Submit newsletter success",
+        params: {
+          campaign: "newsletter_signup",
+          source: "organic"
+        },
+      })
+    } catch (error) {
+      // Evento de erro
+      sendAnalyticsEvent({
+        name: "Submit newsletter error",
+        params: {
+          error_message: error.message
+        },
+      })
+    }
+  }
+  
+  return <form onSubmit={handleSubmit}>...</form>
+}
+```
+
+### Eventos Padrão do E-commerce
+
+```typescript
+// CORRETO - Eventos padrão do FastStore
+import { sendAnalyticsEvent } from "@faststore/sdk"
+
+// View Item
+sendAnalyticsEvent({
+  name: "view_item",
+  params: {
+    items: [{
+      item_id: product.id,
+      item_name: product.name,
+      price: product.offers.lowPrice,
+      item_brand: product.brand.name,
+    }]
+  }
+})
+
+// Add to Cart
+sendAnalyticsEvent({
+  name: "add_to_cart",
+  params: {
+    currency: "USD",
+    value: item.price,
+    items: [{
+      item_id: item.id,
+      item_name: item.name,
+      quantity: item.quantity,
+    }]
+  }
+})
+
+// Begin Checkout
+sendAnalyticsEvent({
+  name: "begin_checkout",
+  params: {
+    currency: "USD",
+    value: cart.totalPrice,
+    items: cart.items,
+  }
+})
+```
+
+---
+
+## 8. Performance e Core Web Vitals {#performance}
+
+### Lazy Loading de Imagens
+
+```typescript
+// CORRETO - Next.js Image com lazy loading
+import Image from "next/image"
+
+const ProductImage = ({ src, alt }: Props) => {
+  return (
+    <Image
+      src={src}
+      alt={alt}
+      width={300}
+      height={300}
+      loading="lazy"
+      quality={80}
+    />
+  )
+}
+```
+
+### Code Splitting com Dynamic Import
+
+```typescript
+// CORRETO - Carregar componentes pesados dinamicamente
+import dynamic from "next/dynamic"
+
+const HeavyComponent = dynamic(
+  () => import("./components/HeavyComponent"),
+  {
+    loading: () => <div>Loading...</div>,
+    ssr: false, // Desabilitar SSR se necessário
+  }
+)
+
+const Page = () => {
+  return (
+    <div>
+      <h1>My Page</h1>
+      <HeavyComponent />
+    </div>
+  )
+}
+```
+
+### Memoização
+
+```typescript
+// CORRETO - useMemo e useCallback
+import { useMemo, useCallback } from "react"
+
+const ProductList = ({ products }: Props) => {
+  // Memoizar cálculos pesados
+  const sortedProducts = useMemo(() => {
+    return products.sort((a, b) => b.price - a.price)
+  }, [products])
+  
+  // Memoizar callbacks
+  const handleProductClick = useCallback((productId: string) => {
+    sendAnalyticsEvent({
+      name: "select_item",
+      params: { item_id: productId }
+    })
+  }, [])
+  
+  return (
+    <ul>
+      {sortedProducts.map(product => (
+        <li key={product.id} onClick={() => handleProductClick(product.id)}>
+          {product.name}
+        </li>
+      ))}
+    </ul>
+  )
+}
+```
+
+### Font Optimization
+
+```typescript
+// CORRETO - next/font para otimizar fontes
+import { Inter } from "next/font/google"
+
+const inter = Inter({
+  subsets: ["latin"],
+  display: "swap",
+  variable: "--font-inter",
+})
+
+export default function RootLayout({ children }: Props) {
+  return (
+    <html lang="en" className={inter.variable}>
+      <body>{children}</body>
+    </html>
+  )
+}
+```
+
+---
+
+## Checklist de Boas Práticas
+
+### Estrutura e Organização
+- [ ] Componentes em PascalCase com pasta dedicada?
+- [ ] Sections em `src/components/sections/`?
+- [ ] Estilos com `.module.scss`?
+- [ ] Utilitários em `src/utils/`?
+
+### Componentes e Tipagem
+- [ ] Props tipadas com TypeScript?
+- [ ] JSDoc comments para props complexas?
+- [ ] Default exports no final do arquivo?
+- [ ] Refs tipadas corretamente (useRef<HTMLElement>)?
+
+### Hooks e Contextos
+- [ ] Usando hooks do FastStore (@faststore/core, @faststore/sdk)?
+- [ ] usePDP para dados de produto?
+- [ ] useSession para dados do usuário?
+- [ ] useCart para carrinho?
+
+### Estilização
+- [ ] SCSS Modules (`.module.scss`)?
+- [ ] Design tokens (var(--fs-spacing-*, --fs-color-*))?
+- [ ] Mobile-first responsive?
+- [ ] Classes CSS únicas por componente?
+
+### Analytics
+- [ ] sendAnalyticsEvent para eventos customizados?
+- [ ] useAnalyticsEvent para ouvir eventos?
+- [ ] Eventos padrão do e-commerce (view_item, add_to_cart)?
+
+### Performance
+- [ ] Lazy loading em imagens (next/image)?
+- [ ] Code splitting com dynamic()?
+- [ ] useMemo para cálculos pesados?
+- [ ] useCallback para handlers?
+- [ ] Fontes otimizadas (next/font)?
+
+---
+
+## Exemplo Completo: Custom Product Section
+
+```typescript
+// src/components/sections/CustomProductDetails/CustomProductDetails.tsx
+import { usePDP } from "@faststore/core"
+import { Button, Icon } from "@faststore/ui"
+import { sendAnalyticsEvent } from "@faststore/sdk"
+import { useMemo } from "react"
+import { priceFormatter } from "../../../utils/priceFormatter"
+
+import styles from "./section.module.scss"
+
+export interface CustomProductDetailsProps {
+  /**
+   * Show installment information
+   */
+  showInstallments?: boolean
+  /**
+   * Installments color variant
+   */
+  installmentsVariant?: "primary" | "secondary"
+}
+
+function CustomProductDetails({
+  showInstallments = true,
+  installmentsVariant = "primary"
+}: CustomProductDetailsProps) {
+  const context = usePDP()
+  const product = context?.data?.product
+
+  const bestInstallment = useMemo(() => {
+    if (!product?.availableInstallments?.length) return null
+    
+    return product.availableInstallments.find(
+      (inst) => inst.installmentInterest === 0
+    )
+  }, [product?.availableInstallments])
+
+  const handleAddToCart = () => {
+    sendAnalyticsEvent({
+      name: "add_to_cart",
+      params: {
+        currency: "USD",
+        value: product?.offers?.lowPrice,
+        items: [{
+          item_id: product?.id,
+          item_name: product?.name,
+        }]
+      }
+    })
+  }
+
+  if (!product) return null
+
+  return (
+    <section className={styles.section}>
+      <h1 className={styles.title}>{product.name}</h1>
+      
+      <div className={styles.priceContainer}>
+        <span className={styles.price}>
+          {priceFormatter(product.offers.lowPrice)}
+        </span>
+        
+        {showInstallments && bestInstallment && (
+          <div className={`${styles.installments} ${styles[`installments--${installmentsVariant}`]}`}>
+            <Icon name="CreditCard" width={20} height={20} />
+            <span>
+              {bestInstallment.installmentNumber}x of{" "}
+              {priceFormatter(bestInstallment.installmentValue)}{" "}
+              interest-free
+            </span>
+          </div>
+        )}
+      </div>
+
+      <Button
+        variant="primary"
+        onClick={handleAddToCart}
+        className={styles.buyButton}
+      >
+        Add to Cart
+      </Button>
+    </section>
+  )
+}
+
+export default CustomProductDetails
+```
+
+```scss
+// src/components/sections/CustomProductDetails/section.module.scss
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--fs-spacing-3);
+  padding: var(--fs-spacing-5);
+  background-color: var(--fs-color-neutral-bkg);
+  border-radius: var(--fs-border-radius);
+}
+
+.title {
+  font-size: var(--fs-text-size-4);
+  font-weight: var(--fs-text-weight-bold);
+  color: var(--fs-color-text);
+  margin: 0;
+}
+
+.priceContainer {
+  display: flex;
+  flex-direction: column;
+  gap: var(--fs-spacing-2);
+}
+
+.price {
+  font-size: var(--fs-text-size-5);
+  font-weight: var(--fs-text-weight-bold);
+  color: var(--fs-color-primary-text);
+}
+
+.installments {
+  display: flex;
+  align-items: center;
+  gap: var(--fs-spacing-1);
+  padding: var(--fs-spacing-2);
+  border-radius: var(--fs-border-radius);
+  font-size: var(--fs-text-size-1);
+  
+  &--primary {
+    background-color: var(--fs-color-primary-bkg-light);
+    color: var(--fs-color-primary-text);
+  }
+  
+  &--secondary {
+    background-color: var(--fs-color-secondary-bkg-light);
+    color: var(--fs-color-secondary-text);
+  }
+}
+
+.buyButton {
+  width: 100%;
+  margin-top: var(--fs-spacing-2);
+}
+
+@media (min-width: 768px) {
+  .section {
+    padding: var(--fs-spacing-7);
+  }
+  
+  .buyButton {
+    width: auto;
+    min-width: 200px;
+  }
+}
+```

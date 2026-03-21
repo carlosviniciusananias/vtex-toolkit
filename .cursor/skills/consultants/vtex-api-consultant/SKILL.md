@@ -1,4 +1,17 @@
-# VTEX Storefront & API Consultant Skill
+---
+name: vtex-api-consultant
+description: >
+  Consultar documentação de APIs VTEX para entender:
+  - Endpoints disponíveis (Catalog, Checkout, OMS, Logistics, etc.)
+  - Autenticação e headers necessários
+  - Payloads de request/response
+  - Rate limits e boas práticas
+  - Políticas de acesso necessárias
+  Trigger: perguntas sobre "qual endpoint usar", "como autenticar", "payload da API", "documentação VTEX API"
+---
+
+
+# VTEX API Consultant Skill
 
 Esta habilidade capacita o agente a consultar, extrair e aplicar conhecimentos da documentação oficial da VTEX para o desenvolvimento de lojas no Store Framework (VTEX IO), abrangendo desde APIs até conceitos de interface e estilização.
 
@@ -46,26 +59,3 @@ Esta habilidade capacita o agente a consultar, extrair e aplicar conhecimentos d
 1.  **Pesquisa**: Utilize `WebSearch` com termos específicos baseados no domínio (ex: "VTEX IO flex-layout props").
 2.  **Navegação**: Acesse a URL oficial correspondente e utilize `WebFetch` para ler o conteúdo.
 3.  **Aplicação**: Proponha a solução respeitando a hierarquia: Padrão do Exemplo -> Detalhe Técnico da Documentação.
-
-## Exemplos (Few-Shot)
-
-### Registro de Clients (vtex-api-consultant)
-```typescript
-// SEMPRE prefira importar de @vtex/clients se disponível
-import { Catalog, OMS, Checkout } from '@vtex/clients'
-import { JanusClient, InstanceOptions, IOContext } from '@vtex/api'
-
-// Exemplo de cliente customizado apenas se necessário
-export class CustomPricing extends JanusClient {
-// ...
-```
-
-### Definição de Interface (interfaces.json)
-```json
-{
-  "my-custom-component": {
-    "component": "MyCustomComponent",
-    "render": "lazy"
-  }
-}
-```

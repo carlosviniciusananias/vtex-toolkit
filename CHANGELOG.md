@@ -1,5 +1,28 @@
 # Changelog
 
+## [Unreleased]
+
+### Features
+
+- **Enhanced Validation**: Added validation steps for FastStore (`discovery.config.js`) and Storefront (`manifest.json`) projects, ensuring proper configuration or prompting for required `storeId`, `account`, and `name`.
+- **Refined FastStore Workflows**: Improved generation workflows for FastStore CMS, components, and resolvers, with emphasis on Atomic Design, `SectionOverride`, GraphQL resolvers, and updated references to official VTEX repositories.
+- **Updated `@new-service` Command**: Differentiated between native, Janus, and external API clients for Storefront backend generation, providing clear guidance on client usage.
+- **Expanded Backend Rules**: Detailed sections on native vs. custom clients, GraphQL schemas, resolvers, and `settingsSchema` for sensitive configurations in `storefront/backend.mdc`.
+- **Comprehensive Styling Strategies**: Introduced `CSS Global` vs. `CSS Handles` approaches in `storefront/frontend.mdc`, with critical guidelines for consistency.
+- **Performance Directives**: Added directives for LCP, CLS, and Lazy Loading to `storefront/blocks.mdc`.
+- **Self-Healing Mechanisms**: Integrated new self-healing checks into `storefront/self-healing.mdc`.
+- **Updated README**: The `README.md` file was updated to reflect the AI-powered nature and benefits of the VTEX Toolkit.
+
+### Bug Fixes
+
+- **Removed Deprecated Skills**: Eliminated `faststore-consultant` and `vtex-api-consultant` skill files, as their functionalities are now integrated into the core rules.
+
+### Improved
+
+- **Global Workflow Rules**: Updated the global workflow rules to include mandatory configuration validation and more structured consultation for best practices.
+- **Command Definitions**: Updated `.cursor/commands/new-faststore-cms.md`, `.cursor/commands/new-faststore-components.md`, `.cursor/commands/new-faststore-resolvers.md`, and `.cursor/commands/new-service.md` to reflect the new validation and workflow steps.
+- **Rule Files**: Updated `.cursor/rules/faststore/general.mdc`, `.cursor/rules/global.mdc`, `.cursor/rules/storefront/backend.mdc`, `.cursor/rules/storefront/blocks.mdc`, `.cursor/rules/storefront/frontend.mdc`, and `.cursor/rules/storefront/self-healing.mdc` with the new guidelines, examples, and validation checks.
+
 All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),

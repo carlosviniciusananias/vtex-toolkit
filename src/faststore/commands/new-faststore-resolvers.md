@@ -8,6 +8,7 @@ Este comando automatiza a criação de lógica GraphQL (Resolvers e TypeDefs) na
 - **fragment**: `true` para gerar fragmento em `src/fragments/`.
 
 ## Workflow Resumido
+0. **Validar Config**: Verificar se `discovery.config.js` existe (se não, solicitar `storeId`).
 1. **TypeDefs**: Definição do esquema em `src/graphql/vtex/typeDefs/`.
 2. **Resolvers**: Implementação em `src/graphql/vtex/resolvers/`.
 3. **Registry**: Registro no `index.ts` da pasta de resolvers.

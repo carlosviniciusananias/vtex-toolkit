@@ -1,3 +1,16 @@
+---
+name: faststore-consultant
+description: >
+  Consultar documentação oficial do FastStore para dúvidas sobre:
+  - Estrutura de projetos Next.js no FastStore
+  - Uso de hooks (useSession, useCart, useBuyButton)
+  - GraphQL queries e fragments
+  - Componentes nativos (@faststore/ui)
+  - Integração com VTEX APIs
+  - Performance e otimizações
+  Trigger: qualquer pergunta sobre "como fazer X no FastStore", "qual hook usar", "como integrar", "documentação FastStore"
+---
+
 # FastStore Consultant Skill
 
 Esta habilidade capacita o agente a consultar e aplicar as melhores práticas oficiais da FastStore para Styling, Headless CMS e Componentes, utilizando a documentação oficial como fonte de verdade secundária.

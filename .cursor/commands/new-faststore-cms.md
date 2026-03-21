@@ -8,6 +8,7 @@ Este comando automatiza a configuração do Headless CMS na FastStore.
 - **schema**: `true` para gerar a estrutura de campos (props) básica.
 
 ## Workflow Resumido
+0. **Validar Config**: Verificar se `discovery.config.js` existe (se não, solicitar `storeId`).
 1. **CMS Config**: Criação ou atualização em `/cms/`.
 2. **Files**: `content-types.json` ou `sections.json`.
 3. **Mapeamento**: O `name` da seção deve ser idêntico ao componente React correspondente.

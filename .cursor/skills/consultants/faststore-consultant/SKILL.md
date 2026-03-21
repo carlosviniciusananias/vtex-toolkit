@@ -1,3 +1,16 @@
+---
+name: faststore-consultant
+description: >
+  Consultar documentação oficial do FastStore para dúvidas sobre:
+  - Estrutura de projetos Next.js no FastStore
+  - Uso de hooks (useSession, useCart, useBuyButton)
+  - GraphQL queries e fragments
+  - Componentes nativos (@faststore/ui)
+  - Integração com VTEX APIs
+  - Performance e otimizações
+  Trigger: qualquer pergunta sobre "como fazer X no FastStore", "qual hook usar", "como integrar", "documentação FastStore"
+---
+
 # FastStore Consultant Skill
 
 Esta habilidade capacita o agente a consultar e aplicar as melhores práticas oficiais da FastStore para Styling, Headless CMS e Componentes, utilizando a documentação oficial como fonte de verdade secundária.
@@ -33,42 +46,3 @@ Esta habilidade capacita o agente a consultar e aplicar as melhores práticas of
 1.  **Identificação**: Determine qual domínio da FastStore requer consulta adicional.
 2.  **Pesquisa**: Utilize `WebSearch` e `WebFetch` para obter as diretrizes da URL correspondente.
 3.  **Aplicação**: Implemente o código priorizando o padrão dos exemplos oficiais e complementando com detalhes técnicos da documentação.
-
-## Exemplos (Few-Shot)
-
-### Configuração de Seção no CMS (sections.json)
-```json
-{
-  "name": "CustomSection",
-  "title": "Custom Section",
-  "schema": {
-    "type": "object",
-    "properties": {
-      "title": {
-        "type": "string",
-        "title": "Section Title"
-      }
-    }
-  }
-}
-```
-
-### Componente de Seção React (FastStore UI)
-```tsx
-import React from 'react'
-import { Section } from '@faststore/ui'
-
-interface Props {
-  title: string
-}
-
-const CustomSection = ({ title }: Props) => {
-  return (
-    <Section>
-      <h2>{title}</h2>
-    </Section>
-  )
-}
-
-export default CustomSection
-```

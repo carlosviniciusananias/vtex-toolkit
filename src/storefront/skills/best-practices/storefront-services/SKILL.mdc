@@ -1,0 +1,714 @@
+---
+name: vtex-io-services-best-practices
+description: >
+  Validar e guiar implementação de serviços Node.js no VTEX IO:
+  - Nomenclatura de funções, middlewares e clients
+  - Padrões de rotas REST (verbos HTTP, recursos no plural)
+  - Estrutura de arquivos e organização de pastas
+  - Tratamento de erros e status HTTP apropriados
+  - Tipos TypeScript e interfaces
+  - Uso correto de clientes nativos vs customizados
+  - Destructuring direto do Context (acesso mais eficiente)
+  - Convenções RESTful (Express Best Practices)
+  Trigger: durante criação de serviços backend, middlewares, rotas, ou quando mencionar "boas práticas", "padrões", "nomenclatura", "organização"
+---
+
+# VTEX IO Backend Best Practices
+
+Convenções de nomenclatura, estrutura e padrões de mercado para desenvolvimento de serviços Node.js no VTEX IO.
+
+## Índice
+1. [Nomenclatura de Funções e Middlewares](#nomenclatura)
+2. [Padrões de Rotas REST](#rotas)
+3. [Destructuring do Context](#destructuring)
+4. [Estrutura de Arquivos](#estrutura)
+5. [Tratamento de Erros](#erros)
+6. [Tipos TypeScript](#tipos)
+
+---
+
+## 1. Nomenclatura de Funções e Middlewares {#nomenclatura}
+
+### Middlewares
+
+**Padrão:** `verbo + Entidade + Ação`
+
+```typescript
+// CORRETO - Verbos imperativos, nomes claros
+export async function getClientById(ctx: Context, next: () => Promise<void>) {}
+export async function createClient(ctx: Context, next: () => Promise<void>) {}
+export async function updateClientAddress(ctx: Context, next: () => Promise<void>) {}
+export async function deleteClient(ctx: Context, next: () => Promise<void>) {}
+export async function listClients(ctx: Context, next: () => Promise<void>) {}
+
+// INCORRETO - Nomes vagos ou mal formatados
+export async function getCL(ctx: Context, next: () => Promise<void>) {} // Sigla não clara
+export async function middleware1(ctx: Context, next: () => Promise<void>) {} // Genérico
+export async function ClientGet(ctx: Context, next: () => Promise<void>) {} // PascalCase incorreto
+export async function client_update(ctx: Context, next: () => Promise<void>) {} // snake_case
+```
+
+### Helpers e Utilitários
+
+**Padrão:** `verbo + Substantivo` ou `get + Tipo`
+
+```typescript
+// CORRETO
+export const validateEmail = (email: string): boolean => {}
+export const formatAddress = (address: Address): string => {}
+export const parseOrderData = (data: unknown): Order => {}
+export const getAppSettings = async (ctx: Context): Promise<AppSettings> => {}
+
+// INCORRETO
+export const validator = (email: string): boolean => {} // Muito genérico
+export const doFormat = (address: Address): string => {} // "do" desnecessário
+export const settings = async (ctx: Context): Promise<AppSettings> => {} // Não é verbo
+```
+
+### Clients Customizados (quando necessário)
+
+**Padrão:** `NomeAPI + Client` (PascalCase)
+
+```typescript
+// CORRETO
+export class ShippingAPIClient extends JanusClient {}
+export class PaymentGatewayClient extends ExternalClient {}
+export class NotificationServiceClient extends JanusClient {}
+
+// INCORRETO
+export class shippingClient extends JanusClient {} // camelCase
+export class Client extends JanusClient {} // Muito genérico
+export class API extends JanusClient {} // Não descreve função
+```
+
+---
+
+## 2. Padrões de Rotas REST {#rotas}
+
+### Convenções RESTful (Express Best Practices)
+
+Seguir padrão RESTful com recursos no plural e verbos HTTP semânticos:
+
+```json
+// CORRETO - service.json
+{
+  "routes": {
+    "listClients": {
+      "path": "/_v/clients",
+      "public": false
+    },
+    "getClient": {
+      "path": "/_v/clients/:id",
+      "public": false
+    },
+    "createClient": {
+      "path": "/_v/clients",
+      "public": false
+    },
+    "updateClient": {
+      "path": "/_v/clients/:id",
+      "public": false
+    },
+    "patchClient": {
+      "path": "/_v/clients/:id",
+      "public": false
+    },
+    "deleteClient": {
+      "path": "/_v/clients/:id",
+      "public": false
+    }
+  }
+}
+```
+
+```typescript
+// CORRETO - Mapeamento em node/index.ts (Convenção Express)
+import { method } from '@vtex/api'
+
+export default new Service({
+  routes: {
+    listClients: method({
+      GET: [listClients]
+    }),
+    getClient: method({
+      GET: [getClientById]
+    }),
+    createClient: method({
+      POST: [validateClientData, createClient]
+    }),
+    updateClient: method({
+      PUT: [validateClientData, updateClient]
+    }),
+    patchClient: method({
+      PATCH: [patchClient]
+    }),
+    deleteClient: method({
+      DELETE: [deleteClient]
+    })
+  }
+})
+```
+
+### Matriz de Verbos HTTP (RESTful Standard)
+
+| Verbo HTTP | Ação | Rota Exemplo | Idempotente | Safe | Semântica |
+|------------|------|--------------|-------------|------|-----------|
+| `GET` | Listar | `GET /_v/clients` | | | Recuperar lista |
+| `GET` | Buscar | `GET /_v/clients/:id` | | | Recuperar recurso específico |
+| `POST` | Criar | `POST /_v/clients` | | | Criar novo recurso |
+| `PUT` | Substituir completo | `PUT /_v/clients/:id` | | | Substituir recurso inteiro |
+| `PATCH` | Atualizar parcial | `PATCH /_v/clients/:id` | | | Atualizar campos específicos |
+| `DELETE` | Remover | `DELETE /_v/clients/:id` | | | Deletar recurso |
+
+**Diferença PUT vs PATCH:**
+- **PUT**: Substitui o recurso inteiro (envia todos os campos)
+- **PATCH**: Atualiza apenas campos específicos (envia campos parciais)
+
+```typescript
+// CORRETO - Implementação PUT vs PATCH
+
+// PUT - Substitui inteiro
+export async function updateClient(ctx: Context, next: () => Promise<void>) {
+  const data = await json(ctx.req) // { email, firstName, lastName, document }
+  
+  // Espera TODOS os campos obrigatórios
+  if (!data.email || !data.firstName || !data.lastName || !data.document) {
+    ctx.status = 400
+    ctx.body = { error: 'PUT requires all fields' }
+    return
+  }
+  
+  // Substitui documento completo
+  await ctx.clients.masterdata.createOrUpdateEntireDocument({
+    dataEntity: 'CL',
+    id: ctx.vtex.route.params.id,
+    fields: data
+  })
+  
+  ctx.status = 200
+  await next()
+}
+
+// PATCH - Atualiza parcial
+export async function patchClient(ctx: Context, next: () => Promise<void>) {
+  const data = await json(ctx.req) // { email: "novo@email.com" } ← apenas 1 campo
+  
+  // Aceita campos parciais
+  await ctx.clients.masterdata.updatePartialDocument({
+    dataEntity: 'CL',
+    id: ctx.vtex.route.params.id,
+    fields: data
+  })
+  
+  ctx.status = 200
+  await next()
+}
+```
+
+### Rotas com Relacionamentos
+
+```json
+// CORRETO - Recursos aninhados (Express Best Practice)
+{
+  "routes": {
+    "getClientOrders": {
+      "path": "/_v/clients/:clientId/orders",
+      "public": false
+    },
+    "getClientOrder": {
+      "path": "/_v/clients/:clientId/orders/:orderId",
+      "public": false
+    }
+  }
+}
+```
+
+### Rotas para Ações Customizadas
+
+Quando não se encaixa em CRUD padrão:
+
+```json
+// CORRETO - Ações como subrecursos
+{
+  "routes": {
+    "sendClientNotification": {
+      "path": "/_v/clients/:id/notify",
+      "public": false
+    },
+    "validateClientEmail": {
+      "path": "/_v/clients/validate-email",
+      "public": true
+    },
+    "activateClient": {
+      "path": "/_v/clients/:id/activate",
+      "public": false
+    }
+  }
+}
+```
+
+### Anti-padrões Comuns
+
+```json
+// INCORRETO
+{
+  "routes": {
+    "getCL": {
+      "path": "/_v/getCL", // Verbo na rota
+      "public": false
+    },
+    "client": {
+      "path": "/_v/client/:id", // Singular inconsistente
+      "public": false
+    },
+    "createNewClient": {
+      "path": "/_v/client-new", // Hífen desnecessário
+      "public": false
+    },
+    "updateClientPUT": {
+      "path": "/_v/clients/:id/update", // Verbo redundante
+      "public": false
+    }
+  }
+}
+```
+
+---
+
+## 3. Destructuring do Context {#destructuring}
+
+### ⚡ Regra de Ouro: Acesso Direto (Mais Eficiente)
+
+Sempre destruturar o Context de forma direta e profunda, evitando múltiplas declarações intermediárias.
+
+```typescript
+// INCORRETO - Múltiplas extrações (menos eficiente)
+export async function getClientById(ctx: Context, next: () => Promise<void>) {
+  const { id } = ctx.vtex.route.params
+  const { account, locale } = ctx.vtex
+  
+  const client = await ctx.clients.masterdata.getDocument({
+    dataEntity: 'CL',
+    id,
+    fields: ['email', 'firstName', 'lastName']
+  })
+  
+  // ...
+}
+
+// CORRETO - Destructuring direto e profundo (Express Best Practice)
+export async function getClientById(ctx: Context, next: () => Promise<void>) {
+  const {
+    vtex: { 
+      account, 
+      locale, 
+      route: { params: { id } } 
+    },
+    clients: { masterdata }
+  } = ctx
+  
+  const client = await masterdata.getDocument({
+    dataEntity: 'CL',
+    id,
+    fields: ['email', 'firstName', 'lastName']
+  })
+  
+  // ...
+}
+```
+
+### Por quê Destructuring Direto?
+
+| Aspecto | Múltiplas Extrações | Destructuring Direto |
+|---------|---------------------|---------------------|
+| **Linhas de código** | 3-5 linhas | 1 linha |
+| **Performance** | Múltiplos acessos | Acesso único |
+| **Legibilidade** | Variáveis espalhadas | Tudo declarado junto |
+| **Manutenção** | Dificulta refatoração | Fácil identificar dependências |
+
+### Exemplos Práticos
+
+```typescript
+// CORRETO - POST /clients
+export async function createClient(ctx: Context, next: () => Promise<void>) {
+  const {
+    vtex: { account },
+    clients: { masterdata },
+    req
+  } = ctx
+  
+  const data = await json(req)
+  
+  // Validação
+  if (!data.email || !data.firstName || !data.lastName) {
+    ctx.status = 400
+    ctx.body = {
+      error: 'Missing required fields',
+      code: 'VALIDATION_ERROR',
+      details: { required: ['email', 'firstName', 'lastName'] }
+    }
+    return
+  }
+  
+  const created = await masterdata.createOrUpdateEntireDocument({
+    dataEntity: 'CL',
+    fields: {
+      email: data.email,
+      firstName: data.firstName,
+      lastName: data.lastName,
+      document: data.document,
+      phone: data.phone
+    }
+  })
+  
+  ctx.status = 201
+  ctx.body = {
+    id: created.Id,
+    message: 'Client created successfully'
+  }
+  
+  await next()
+}
+
+// CORRETO - GET /clients/:clientId/orders/:orderId
+export async function getClientOrder(ctx: Context, next: () => Promise<void>) {
+  const {
+    vtex: { 
+      account,
+      route: { params: { clientId, orderId } } 
+    },
+    clients: { masterdata, oms }
+  } = ctx
+  
+  try {
+    // Buscar cliente e pedido em paralelo
+    const [client, order] = await Promise.all([
+      masterdata.getDocument({
+        dataEntity: 'CL',
+        id: clientId,
+        fields: ['email', 'firstName']
+      }),
+      oms.order(orderId)
+    ])
+    
+    if (!client) {
+      ctx.status = 404
+      ctx.body = { error: 'Client not found', code: 'CLIENT_NOT_FOUND' }
+      return
+    }
+    
+    if (!order || order.clientProfileData.email !== client.email) {
+      ctx.status = 404
+      ctx.body = { error: 'Order not found', code: 'ORDER_NOT_FOUND' }
+      return
+    }
+    
+    ctx.status = 200
+    ctx.body = {
+      client,
+      order
+    }
+  } catch (error) {
+    console.error('Error fetching client order:', error)
+    ctx.status = 500
+    ctx.body = {
+      error: 'Internal server error',
+      code: 'INTERNAL_ERROR',
+      message: error instanceof Error ? error.message : 'Unknown error'
+    }
+  }
+  
+  await next()
+}
+
+// CORRETO - PATCH /clients/:id (atualização parcial)
+export async function patchClient(ctx: Context, next: () => Promise<void>) {
+  const {
+    vtex: { route: { params: { id } } },
+    clients: { masterdata },
+    req
+  } = ctx
+  
+  try {
+    const data = await json(req)
+    
+    // PATCH aceita campos parciais (diferente de PUT)
+    if (Object.keys(data).length === 0) {
+      ctx.status = 400
+      ctx.body = {
+        error: 'No fields to update',
+        code: 'EMPTY_BODY'
+      }
+      return
+    }
+    
+    await masterdata.updatePartialDocument({
+      dataEntity: 'CL',
+      id,
+      fields: data
+    })
+    
+    ctx.status = 200
+    ctx.body = {
+      id,
+      message: 'Client updated successfully'
+    }
+  } catch (error) {
+    console.error('Error updating client:', error)
+    ctx.status = 500
+    ctx.body = {
+      error: 'Failed to update client',
+      code: 'UPDATE_ERROR',
+      message: error instanceof Error ? error.message : 'Unknown error'
+    }
+  }
+  
+  await next()
+}
+```
+
+### Quando Extrair Apenas o Necessário
+
+```typescript
+// CORRETO - Se usar apenas 1-2 propriedades, ok extrair simples
+export async function simpleMiddleware(ctx: Context, next: () => Promise<void>) {
+  const { account } = ctx.vtex
+  
+  console.log(`Request from account: ${account}`)
+  
+  await next()
+}
+
+// CORRETO - Mas se usar 3+, prefira destructuring direto
+export async function complexMiddleware(ctx: Context, next: () => Promise<void>) {
+  const {
+    vtex: { account, locale, workspace },
+    clients: { masterdata, catalog, oms }
+  } = ctx
+  
+  // Usar account, locale, workspace, masterdata, catalog, oms...
+}
+```
+
+---
+
+## 4. Estrutura de Arquivos {#estrutura}
+
+### Organização Obrigatória
+
+```
+node/
+├── clients/              # Apenas clientes customizados (não nativos)
+│   ├── index.ts         # Exporta classe Clients
+│   └── CustomAPI.ts     # Cliente específico (se necessário)
+├── middlewares/         # Lógica de negócio
+│   ├── clients/         # Operações de clientes
+│   │   ├── createClient.ts
+│   │   ├── getClientById.ts
+│   │   ├── updateClient.ts
+│   │   ├── patchClient.ts
+│   │   ├── deleteClient.ts
+│   │   └── listClients.ts
+│   ├── orders/          # Operações de pedidos
+│   │   └── ...
+│   └── validators/      # Validações reutilizáveis
+│       ├── validateEmail.ts
+│       └── validateClientData.ts
+├── helpers/             # Funções auxiliares
+│   ├── getAppSettings.ts
+│   └── formatters.ts
+├── types/               # Tipagens TypeScript
+│   ├── clients.d.ts
+│   └── orders.d.ts
+├── resolvers/           # GraphQL (se aplicável)
+│   └── index.ts
+├── index.ts            # Orquestração principal
+└── service.json        # Definição de rotas
+```
+
+### Nomes de Arquivos
+
+```
+CORRETO:
+- createClient.ts (camelCase)
+- validateEmail.ts
+- getAppSettings.ts
+
+INCORRETO:
+- CreateClient.ts (PascalCase)
+- validate_email.ts (snake_case)
+- get-app-settings.ts (kebab-case)
+```
+
+---
+
+## 5. Tratamento de Erros {#erros}
+
+### Padrão Obrigatório em Middlewares
+
+```typescript
+// CORRETO - Try/catch com status HTTP apropriados
+export async function getClientById(ctx: Context, next: () => Promise<void>) {
+  const {
+    vtex: { route: { params: { id } } },
+    clients: { masterdata }
+  } = ctx
+  
+  try {
+    const client = await masterdata.getDocument({
+      dataEntity: 'CL',
+      id,
+      fields: ['email', 'firstName', 'lastName', 'document']
+    })
+    
+    if (!client) {
+      ctx.status = 404
+      ctx.body = {
+        error: 'Client not found',
+        code: 'CLIENT_NOT_FOUND'
+      }
+      return
+    }
+    
+    ctx.status = 200
+    ctx.body = client
+  } catch (error) {
+    console.error('Error fetching client:', error)
+    
+    ctx.status = 500
+    ctx.body = {
+      error: 'Internal server error',
+      code: 'INTERNAL_ERROR',
+      message: error instanceof Error ? error.message : 'Unknown error'
+    }
+  }
+  
+  await next()
+}
+```
+
+### Códigos de Status HTTP
+
+| Código | Situação | Exemplo |
+|--------|----------|---------|
+| `200` | Sucesso | Recurso encontrado/atualizado |
+| `201` | Criado | Novo recurso criado |
+| `204` | Sem conteúdo | Deleção bem-sucedida |
+| `400` | Requisição inválida | Dados mal formatados |
+| `401` | Não autenticado | Token inválido |
+| `403` | Proibido | Sem permissão |
+| `404` | Não encontrado | Recurso inexistente |
+| `409` | Conflito | Recurso duplicado |
+| `422` | Entidade não processável | Validação falhou |
+| `500` | Erro interno | Erro inesperado |
+
+### Estrutura de Resposta de Erro
+
+```typescript
+interface ErrorResponse {
+  error: string        // Mensagem legível
+  code: string        // Código de erro único
+  details?: unknown   // Informações adicionais (opcional)
+}
+
+// CORRETO
+ctx.body = {
+  error: 'Email already registered',
+  code: 'EMAIL_DUPLICATE',
+  details: { email: data.email }
+}
+
+// INCORRETO
+ctx.body = 'Error' // String simples
+ctx.body = { message: 'Error' } // Sem código
+```
+
+---
+
+## 6. Tipos TypeScript {#tipos}
+
+### Interfaces de Domínio
+
+```typescript
+// CORRETO - node/types/clients.d.ts
+export interface Client {
+  id: string
+  email: string
+  firstName: string
+  lastName: string
+  document: string
+  phone?: string
+  createdAt: string
+  updatedAt: string
+}
+
+export interface CreateClientInput {
+  email: string
+  firstName: string
+  lastName: string
+  document: string
+  phone?: string
+}
+
+export interface UpdateClientInput extends Partial<CreateClientInput> {
+  id: string
+}
+```
+
+### Tipagem de Context State
+
+```typescript
+// CORRETO - node/index.ts
+import type { RecorderState } from '@vtex/api'
+import type { AppSettings } from './helpers/getAppSettings'
+
+interface State extends RecorderState {
+  settings: AppSettings
+  validatedData?: CreateClientInput
+}
+
+export default new Service<Clients, State>({
+  // ...
+})
+```
+
+---
+
+## 📚 Checklist de Boas Práticas
+
+### Antes de Implementar
+- [ ] Nome do middleware é claro e segue padrão `verbo + Entidade`?
+- [ ] Rota segue padrão RESTful com recursos no plural?
+- [ ] Verbos HTTP corretos (GET, POST, PUT, PATCH, DELETE)?
+- [ ] Cliente nativo verificado antes de criar customizado?
+- [ ] Estrutura de pastas organizada por domínio?
+
+### Durante Implementação
+- [ ] Destructuring direto do Context (acesso eficiente)?
+- [ ] Try/catch em todos os middlewares?
+- [ ] Status HTTP apropriados para cada cenário?
+- [ ] Tipos TypeScript definidos para inputs/outputs?
+- [ ] Logs de erro com contexto suficiente?
+
+### Após Implementação
+- [ ] Testes de rotas funcionando?
+- [ ] Políticas de acesso configuradas?
+- [ ] Documentação das rotas no README?
+- [ ] Code review passou por checklist de nomenclatura?
+- [ ] PUT vs PATCH implementados corretamente?
+
+---
+
+## Erros Comuns e Como Evitar
+
+| Erro | Problema | Solução |
+|------|----------|---------|
+| `CLClient extends MasterData` | Wrapper desnecessário | Usar `ctx.clients.masterdata` direto |
+| `GET /_v/getClient` | Verbo na rota | Usar `GET /_v/clients/:id` |
+| `middleware1.ts` | Nome genérico | Renomear para `getClientById.ts` |
+| `const { id } = ctx.vtex.route.params` (3+ linhas) | Múltiplas extrações | Usar destructuring direto |
+| Sem try/catch | Erro não tratado | Sempre adicionar try/catch |
+| Status 200 em erro | Status incorreto | Usar 4xx/5xx apropriados |
+| Tipos `any` | Sem type safety | Definir interfaces explícitas |
+| Usar PUT para atualização parcial | Semântica incorreta | Usar PATCH para parcial |
+| Rota singular `/_v/client/:id` | Inconsistente | Usar plural `/_v/clients/:id` |

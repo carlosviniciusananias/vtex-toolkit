@@ -1,0 +1,159 @@
+# Guia de Uso: VTEX Toolkit CLI
+
+O **VTEX Toolkit** é um conjunto de regras inteligentes (.mdc), comandos e
+habilidades para o Cursor IDE, projetado para acelerar o desenvolvimento no
+ecossistema VTEX (IO e FastStore).
+
+## Instalação Rápida (Recomendado)
+
+A forma mais simples de utilizar o toolkit em qualquer projeto é através da
+nossa CLI oficial. Não é necessário baixar o repositório manualmente.
+
+Abra o terminal na raiz do seu projeto e execute:
+
+```bash
+npx vtex-toolkit
+```
+
+Este comando irá:
+
+1. Perguntar qual framework você está utilizando (**Storefront IO** ou
+   **FastStore**).
+2. Criar a estrutura de pastas para as habilidades (`.cursor/skills/best-practices/` e `.cursor/skills/consultants/`) em `src/`.
+3. Instalar as regras inteligentes em `.cursor/rules/` e sincronizá-las com `src/rules/`.
+4. Instalar as habilidades (skills) em `.cursor/skills/` e sincronizá-las com `src/skills/`.
+5. Instalar os atalhos de comandos em `.cursor/commands/` e sincronizá-los com `src/commands/`.
+
+> **Nota Importante**: Após a instalação, **reinicie o seu Cursor IDE** para que o toolkit seja totalmente carregado e as novas funcionalidades estejam disponíveis.
+
+## O que está incluído?
+
+### 1. Regras Inteligentes (.mdc)
+
+Localizadas em `.cursor/rules/`, elas ensinam ao Cursor os padrões técnicos da
+VTEX:
+
+- **Storefront**: Blocks (JSONC), Frontend (React) e Backend (Node.js).
+- **FastStore**: CMS, Componentes (Atomic Design) e Resolvers GraphQL.
+- **Performance**: Checklists automáticos para Core Web Vitals (LCP, CLS).
+- **Self-Healing**: Diagnóstico e correção proativa de erros comuns.
+
+### 2. Padrões Avançados (Exemplos)
+
+O toolkit inclui exemplos práticos de implementações reais:
+
+- **Frontend**: Componentes de desconto dinâmico, prateleiras customizadas e
+  manipulação de contexto (`useProductDispatch`).
+- **Backend**: Consumo de APIs externas (ViaCEP), extensão de `MasterData` e
+  resolvers GraphQL.
+- **Contextos**: Integração profunda com `vtex.product-context`,
+  `vtex.order-manager` e `vtex.session-client`.
+
+### 3. Habilidades (Skills)
+
+Localizadas em `.cursor/skills/`, elas capacitam o agente a:
+
+- **Consultants (Reativo)**: Consultar documentações oficiais e APIs VTEX para dúvidas específicas.
+  - `vtex-api-consultant`: Consulta de endpoints e autenticação de APIs VTEX.
+  - `faststore-consultant`: Melhores práticas de componentes FastStore.
+- **Best Practices (Proativo)**: Fornecer diretrizes e padrões durante a implementação, garantindo qualidade e consistência.
+  - `vtex-io-services-best-practices`: Valida nomenclatura, rotas REST, tratamento de erros para serviços Node.js.
+  - `storefront-components-best-practices`: Valida CSS Handles, schemas, i18n, performance para componentes React.
+  - `faststore-best-practices`: Valida SCSS modules, hooks, analytics, Core Web Vitals para FastStore.
+
+#### Estrutura de Pastas de Skills
+```mermaid
+graph TD
+    A[.cursor/skills]
+    B[best-practices]
+    C[consultants]
+    D[vtex-io-services]
+    E[storefront-components]
+    F[faststore]
+    G[vtex-api-consultant]
+    H[faststore-consultant]
+
+    A --> B
+    A --> C
+
+    B --> D
+    B --> E
+    B --> F
+
+    C --> G
+    C --> H
+
+    D -- SKILL.mdc --> DI[SKILL.mdc]
+    E -- SKILL.mdc --> EI[SKILL.mdc]
+    F -- SKILL.mdc --> FI[SKILL.mdc]
+    G -- SKILL.md --> GI[SKILL.md]
+    H -- SKILL.md --> HI[SKILL.md]
+```
+
+### 4. Comandos Rápidos
+
+Localizados em `.cursor/commands/`, servem como atalhos para os workflows
+`@new-*`.
+
+## Como Usar
+
+Após a instalação, reinicie o seu **Cursor IDE**. Você pode ativar os workflows
+digitando `@` seguido do comando no chat ou Composer:
+
+### Fluxo de Validação de Configuração (Novo)
+
+Ao executar qualquer comando de geração pela primeira vez em um projeto, o agente realizará uma validação automática:
+
+- **VTEX IO**: Se o `manifest.json` não for encontrado, será solicitado o nome da **conta** e do **projeto**.
+- **FastStore**: Se o `discovery.config.js` não for encontrado, será solicitado o **storeId** (conta).
+
+> **Nota Importante**: Ao utilizar qualquer comando de geração (`@new-*`), sempre forneça uma breve descrição do que você deseja realizar. Se o comando for enviado sozinho, o agente solicitará mais informações antes de agir.
+
+### Referências e Exemplos
+
+O toolkit utiliza duas fontes principais de verdade para código e padrões:
+1. **VTEX Toolkit Examples**: Padrões estruturais e implementações recomendadas.
+2. **FastStore Playground**: Exemplos reais de Section Overrides V2, API Extensions e Analytics.
+
+---
+
+### Comandos Storefront (VTEX IO)
+
+- `@new-storefront-block name:hero-home type:row preload:true "Crie um banner principal para a home com imagem de fundo e um botão de CTA para a coleção de verão"`
+- `@new-storefront-component name:DiscountBadge withSchema:true "Crie um componente de selo de desconto que mostre a porcentagem de economia baseada no preço de lista e preço de venda do produto"`
+- `@new-storefront-service name:inventory-api type:external crud:true "Crie um serviço para consultar o estoque em um ERP externo, incluindo autenticação via AppKey e tratamento de erros"`
+
+### Comandos FastStore
+
+- `@new-faststore-cms type:section name:NewsletterSection schema:true "Configure uma seção de newsletter para o CMS com campos para título, descrição e cor de fundo customizável"`
+- `@new-faststore-components name:ProductCard type:molecule "Crie um componente de card de produto seguindo o design system da loja, incluindo imagem, nome e preço com suporte a lazy loading"`
+- `@new-faststore-resolvers name:shippingQuotes type:query fragment:true "Implemente um resolver para buscar cotações de frete customizadas integrando com a API de logística da VTEX"`
+
+### Manutenção
+
+- `@health`: Varredura de integridade e performance.
+- `@format`: Formatação de código via Prettier.
+- `@pr-ready`: Prepara o resumo e validações para o seu Pull Request.
+
+## Boas Práticas e Segurança
+
+### Sincronização e Fonte da Verdade
+
+A pasta `.cursor/` é a **fonte da verdade** para todas as configurações, regras, comandos, habilidades e documentações do toolkit. A pasta `src/` serve como um **espelho exato** de `.cursor/`, garantindo que o toolkit esteja sempre disponível e funcional, mesmo em ambientes onde `.cursor/` pode ser ignorado por convenções de versionamento.
+
+> **É CRÍTICO garantir que `src/` esteja sempre sincronizado com `.cursor/` para manter a consistência e funcionalidade do toolkit.**
+
+### Padronização de Commits (Semantic Release)
+
+### Padronização de Commits (Semantic Release)
+
+Para garantir o versionamento automático e a publicação no NPM, este projeto utiliza **Conventional Commits**. Ao contribuir, utilize os seguintes prefixos:
+
+- `feat:` -> Para novas funcionalidades (gera versão **MINOR**).
+- `fix:` -> Para correções de bugs (gera versão **PATCH**).
+- `chore:` -> Para tarefas de manutenção que não alteram o código (sem release).
+- `docs:` -> Para alterações apenas em documentação (sem release).
+- `BREAKING CHANGE:` no corpo do commit -> Para mudanças que quebram compatibilidade (gera versão **MAJOR**).
+
+- **Confirmação de Intenção**: Para ações complexas, o agente pedirá sua
+  confirmação antes de gerar múltiplos arquivos.
