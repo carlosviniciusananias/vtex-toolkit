@@ -26,6 +26,51 @@ Modularidade e integridade na geração de blocos.
 - PDP: `https://raw.githubusercontent.com/carlosviniciusananias/vtex-toolkit/main/examples/storefront/store-theme/store/blocks/pdp/product.jsonc`.
 - Search: `https://raw.githubusercontent.com/carlosviniciusananias/vtex-toolkit/main/examples/storefront/store-theme/store/blocks/search/search.jsonc`.
 
+## Exemplos
+
+### Estrutura de Home com Banner (LCP) e Divisor de Dobra (__fold__)
+```jsonc
+{
+  "store.home": {
+    "blocks": [
+      "list-context.image-list#main-banner",
+      "__fold__",
+      "flex-layout.row#shelf"
+    ]
+  },
+  "list-context.image-list#main-banner": {
+    "title": "Banner Principal - Home",
+    "props": {
+      "height": 570,
+      "preload": true,
+      "images": [
+        {
+          "image": "https://example.com/banner.png",
+          "mobileImage": "https://example.com/banner-mobile.png"
+        }
+      ]
+    }
+  }
+}
+```
+
+### Prateleira de Produtos com Slider
+```jsonc
+{
+  "flex-layout.row#shelf": {
+    "title": "Prateleira de Lançamentos",
+    "children": ["list-context.product-list#demo1"]
+  },
+  "list-context.product-list#demo1": {
+    "blocks": ["product-summary.shelf"],
+    "children": ["slider-layout#demo-products"],
+    "props": {
+      "orderBy": "OrderByTopSaleDESC"
+    }
+  }
+}
+```
+
 ## Validação (Mandatória)
 - [ ] Blocos com `#` declarados no arquivo ou em `common.jsonc`.
 - [ ] IDs semânticos e aninhamento max 3 níveis.

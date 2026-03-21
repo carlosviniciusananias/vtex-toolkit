@@ -19,7 +19,7 @@ Sempre que detectar um erro de terminal ou inconsistência de padrão, execute:
 
 1.  **Identificação**: Localize o tipo de erro (ex: `Block not found`, `Missing dependency`, `Syntax error`).
 2.  **Diagnóstico**: Verifique se o recurso está declarado no `manifest.json` ou se o bloco possui definição.
-3.  **Correção Proativa**: Sugira a correção IMEDIATAMENTE, sem esperar solicitação do usuário.
+3.  **Correção Proativa**: Sugira a correção IMEDIATAMENTE, utilizando as soluções documentadas em `.cursor/docs/TROUBLESHOOTING.md`.
 
 ## Checklist de Integridade (Auto-Scan)
 

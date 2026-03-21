@@ -1,0 +1,803 @@
+---
+name: storefront-components-best-practices
+description: >
+  Validar e guiar implementação de blocos e componentes React no VTEX IO:
+  - Hooks do VTEX (useProduct, useRuntime, usePixel)
+  - Estilização com CSS Modules e Tachyons
+  - Acessibilidade e semântica HTML
+  - Performance (memo, useMemo, useCallback)
+  - Testes com React Testing Library
+  Trigger: durante criação de componentes React personalizados, hooks customizados, ou menções a "componente customizado", "React VTEX IO"
+---
+
+# VTEX IO Store Framework Best Practices
+
+Padrões oficiais baseados nos repositórios VTEX para desenvolvimento de blocos customizados e temas no Store Framework.
+
+## Índice
+1. [Estrutura de Projeto](#estrutura)
+2. [Nomenclatura de Blocos](#nomenclatura)
+3. [Schemas e Site Editor](#schemas)
+4. [CSS Handles](#css-handles)
+5. [Componentes React](#componentes-react)
+6. [Interfaces e Composição](#interfaces)
+7. [Internacionalização (i18n)](#i18n)
+8. [Performance e Otimizações](#performance)
+
+---
+
+## 1. Estrutura de Projeto {#estrutura}
+
+### Estrutura Padrão de App VTEX IO
+
+```
+vtex.custom-app/
+├── manifest.json                    # Configuração do app
+├── store/
+│   ├── blocks/                      # Blocos organizados por contexto
+│   │   ├── home/
+│   │   │   ├── home.jsonc
+│   │   │   └── banner.jsonc
+│   │   ├── pdp/
+│   │   │   ├── product.jsonc
+│   │   │   └── product-gallery.jsonc
+│   │   ├── search/
+│   │   │   └── search.jsonc
+│   │   ├── footer/
+│   │   │   └── footer.jsonc
+│   │   └── header/
+│   │       └── header.jsonc
+│   ├── blocks.jsonc                 # Blocos globais ou legacy
+│   ├── interfaces.json              # Definição de blocos customizados
+│   └── contentSchemas.json          # Schemas para Site Editor (opcional)
+├── react/
+│   ├── components/                  # Componentes reutilizáveis
+│   │   ├── ProductCard.tsx
+│   │   └── CustomButton.tsx
+│   ├── hooks/                       # Hooks customizados
+│   │   └── useProductData.ts
+│   ├── typings/                     # Tipos TypeScript
+│   │   ├── globals.d.ts
+│   │   └── vtex.d.ts
+│   ├── CustomShelf.tsx              # Componente principal
+│   ├── RecommendationShelf.tsx      # Componente principal
+│   └── package.json
+├── messages/                        # Traduções i18n
+│   ├── en.json
+│   ├── pt.json
+│   └── es.json
+├── docs/
+│   └── README.md
+└── CHANGELOG.md
+```
+
+### manifest.json
+
+```json
+{
+  "vendor": "quality",
+  "name": "custom-components",
+  "version": "1.0.0",
+  "title": "Custom Components",
+  "description": "Custom components for VTEX Store Framework",
+  "builders": {
+    "store": "0.x",
+    "react": "3.x",
+    "messages": "1.x",
+    "docs": "0.x"
+  },
+  "dependencies": {
+    "vtex.css-handles": "0.x",
+    "vtex.product-context": "0.x",
+    "vtex.product-summary": "2.x",
+    "vtex.slider-layout": "0.x",
+    "vtex.flex-layout": "0.x",
+    "vtex.render-runtime": "8.x"
+  },
+  "$schema": "https://raw.githubusercontent.com/vtex/node-vtex-api/master/gen/manifest.schema"
+}
+```
+
+---
+
+## 2. Nomenclatura de Blocos {#nomenclatura}
+
+### Convenções de Nomenclatura
+
+**Padrão:** `vendor.app-name@version/block-name`
+
+```jsonc
+// CORRETO - store/blocks/home/home.jsonc
+{
+  "store.home": {
+    "blocks": [
+      "quality.custom-components@1.x/custom-shelf",
+      "quality.custom-components@1.x/newsletter-form"
+    ]
+  }
+}
+
+// INCORRETO
+{
+  "store.home": {
+    "blocks": [
+      "customShelf",                        // Sem vendor/app
+      "quality.CustomShelf",                // PascalCase
+      "quality.custom_components@1.x/shelf" // snake_case
+    ]
+  }
+}
+```
+
+### Nomenclatura de Arquivos
+
+**Padrão:** kebab-case com extensão `.json` ou `.jsonc`
+
+```
+CORRETO:
+- product.jsonc
+- product-gallery.jsonc
+- search-result.jsonc
+- recommendation-shelf.json
+
+INCORRETO:
+- Product.jsonc (PascalCase)
+- product_gallery.jsonc (snake_case)
+- searchResult.jsonc (camelCase)
+```
+
+### Organização de Blocos por Contexto
+
+```
+store/blocks/
+├── home/           # Blocos da home
+│   ├── home.jsonc
+│   ├── banner.jsonc
+│   └── shelf.jsonc
+├── pdp/            # Blocos de produto
+│   ├── product.jsonc
+│   └── product-specifications.jsonc
+├── search/         # Blocos de busca
+│   └── search.jsonc
+├── footer/         # Blocos do rodapé
+│   └── footer.jsonc
+└── header/         # Blocos do header
+    └── header.jsonc
+```
+
+---
+
+## 3. Schemas e Site Editor {#schemas}
+
+### Schema Básico com i18n
+
+```typescript
+// CORRETO - react/RecommendationShelf.tsx
+import { defineMessages } from 'react-intl'
+
+defineMessages({
+  shelf: {
+    id: 'admin/editor.recommendation-shelf',
+    defaultMessage: 'Recommendation Shelf',
+  },
+  description: {
+    id: 'admin/editor.recommendation-shelf.description',
+    defaultMessage: 'Displays recommended products based on algorithms and context',
+  },
+  title: {
+    id: 'admin/editor.recommendation-shelf.title',
+    defaultMessage: 'Shelf title',
+  },
+  displayTitle: {
+    id: 'admin/editor.recommendation-shelf.display-title',
+    defaultMessage: 'Display Title',
+  }
+})
+
+type Props = {
+  campaignVrn: string
+  title?: string
+  displayTitle: boolean
+}
+
+const RecommendationShelf: StorefrontFunctionComponent<Props> = ({
+  campaignVrn,
+  title,
+  displayTitle
+}) => {
+  if (!campaignVrn) return null
+  
+  return (
+    // ... component implementation
+  )
+}
+
+RecommendationShelf.schema = {
+  title: 'admin/editor.recommendation-shelf',
+  description: 'admin/editor.recommendation-shelf.description',
+  type: 'object',
+  properties: {
+    title: {
+      title: 'admin/editor.recommendation-shelf.title',
+      type: 'string',
+    },
+    campaignVrn: {
+      title: 'admin/editor.recommendation-shelf.campaign-vrn',
+      type: 'string',
+    },
+    displayTitle: {
+      title: 'admin/editor.recommendation-shelf.display-title',
+      type: 'boolean',
+      default: true,
+    }
+  }
+}
+
+export default RecommendationShelf
+```
+
+### Schema com Enums
+
+```typescript
+// CORRETO - Enums com i18n
+RecommendationShelf.schema = {
+  title: 'admin/editor.recommendation-shelf',
+  type: 'object',
+  properties: {
+    itemsContext: {
+      title: 'admin/editor.recommendation-shelf.items-context',
+      description: 'admin/editor.recommendation-shelf.items-context.description',
+      type: 'array',
+      items: {
+        type: 'string',
+        enum: ['PDP', 'CART'],
+        enumNames: [
+          'admin/editor.recommendation-shelf.items-context.pdp',
+          'admin/editor.recommendation-shelf.items-context.cart',
+        ],
+      },
+      default: ['PDP'],
+    }
+  }
+}
+```
+
+### Arquivos de Tradução
+
+```json
+// CORRETO - messages/en.json
+{
+  "admin/editor.recommendation-shelf": "Recommendation Shelf",
+  "admin/editor.recommendation-shelf.description": "Displays recommended products",
+  "admin/editor.recommendation-shelf.title": "Shelf title",
+  "admin/editor.recommendation-shelf.display-title": "Display Title",
+  "admin/editor.recommendation-shelf.items-context": "Items Context",
+  "admin/editor.recommendation-shelf.items-context.pdp": "Product Page",
+  "admin/editor.recommendation-shelf.items-context.cart": "Cart"
+}
+
+// messages/pt.json
+{
+  "admin/editor.recommendation-shelf": "Prateleira de Recomendação",
+  "admin/editor.recommendation-shelf.description": "Exibe produtos recomendados",
+  "admin/editor.recommendation-shelf.title": "Título da prateleira",
+  "admin/editor.recommendation-shelf.display-title": "Mostrar Título",
+  "admin/editor.recommendation-shelf.items-context": "Contexto dos Itens",
+  "admin/editor.recommendation-shelf.items-context.pdp": "Página de Produto",
+  "admin/editor.recommendation-shelf.items-context.cart": "Carrinho"
+}
+```
+
+---
+
+## 4. CSS Handles {#css-handles}
+
+### Definição e Uso
+
+```typescript
+// CORRETO - Handles bem definidos
+import { useCssHandles } from 'vtex.css-handles'
+
+const CSS_HANDLES = [
+  'container',
+  'header',
+  'title',
+  'productList',
+  'productItem',
+  'productImage',
+  'productName',
+  'productPrice'
+] as const
+
+const CustomShelf: React.FC = () => {
+  const handles = useCssHandles(CSS_HANDLES)
+  
+  return (
+    <div className={handles.container}>
+      <header className={handles.header}>
+        <h2 className={handles.title}>Featured Products</h2>
+      </header>
+      <ul className={handles.productList}>
+        {products.map(product => (
+          <li key={product.id} className={handles.productItem}>
+            <img className={handles.productImage} src={product.image} />
+            <span className={handles.productName}>{product.name}</span>
+          </li>
+        ))}
+      </ul>
+    </div>
+  )
+}
+```
+
+### Customização via CSS
+
+```css
+/* styles/css/vtex.custom-components.css */
+
+/* Handle padrão */
+.container {
+  padding: 2rem;
+  background-color: #f5f5f5;
+}
+
+/* Modificador com blockClass */
+.container--dark {
+  background-color: #333;
+  color: white;
+}
+
+/* Handle aninhado */
+.container .title {
+  font-size: 2rem;
+  font-weight: bold;
+  margin-bottom: 1rem;
+}
+```
+
+---
+
+## 5. Componentes React {#componentes-react}
+
+### Estrutura de Componente
+
+```typescript
+// CORRETO - react/RecommendationShelf.tsx
+import React from 'react'
+import { defineMessages } from 'react-intl'
+
+import { RecommendationShelfErrorBoundary } from './components/RecommendationShelfErrorBoundary'
+import { RecommendationShelfContainer } from './components/RecommendationShelfContainer'
+
+defineMessages({
+  // ... messages
+})
+
+type Props = {
+  campaignVrn: string
+  title?: string
+  displayTitle: boolean
+  itemsContext: ItemContextType[]
+}
+
+const RecommendationShelf: StorefrontFunctionComponent<Props> = ({
+  campaignVrn,
+  title,
+  displayTitle,
+  itemsContext,
+}) => {
+  // Early return para validações
+  if (!campaignVrn) return null
+
+  return (
+    <RecommendationShelfErrorBoundary>
+      <RecommendationShelfContainer
+        campaignVrn={campaignVrn}
+        title={title}
+        displayTitle={displayTitle}
+        itemsContext={itemsContext}
+      />
+    </RecommendationShelfErrorBoundary>
+  )
+}
+
+RecommendationShelf.schema = {
+  // ... schema
+}
+
+export default RecommendationShelf
+```
+
+### Hooks Customizados
+
+```typescript
+// CORRETO - react/hooks/useRecommendations.tsx
+import { useEffect, useState } from 'react'
+import { canUseDOM, useRuntime } from 'vtex.render-runtime'
+
+type RecommendationInput = {
+  campaignVrn: string
+  products: string[]
+  userId?: string | null
+}
+
+function useRecommendations(args: RecommendationInput) {
+  const runtime = useRuntime()
+  const { account } = runtime
+
+  const [data, setData] = useState<Response | null>(null)
+  const [error, setError] = useState<Error | null>(null)
+  const [loading, setLoading] = useState<boolean>(false)
+
+  useEffect(() => {
+    if (!canUseDOM) return
+
+    setLoading(true)
+    setError(null)
+
+    fetch(`/api/recommend-bff/v2/recommendations?...`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
+      .then(async (response) => {
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`)
+        }
+        const result = await response.json()
+        setData(result)
+      })
+      .catch((err) => {
+        setError(err)
+        setData(null)
+      })
+      .finally(() => {
+        setLoading(false)
+      })
+  }, [account, args.campaignVrn, args.products])
+
+  return {
+    error,
+    data,
+    loading,
+  }
+}
+
+export default useRecommendations
+```
+
+### Error Boundaries
+
+```typescript
+// CORRETO - react/components/RecommendationShelfErrorBoundary.tsx
+import React, { Component, ErrorInfo, ReactNode } from 'react'
+
+interface Props {
+  children: ReactNode
+}
+
+interface State {
+  hasError: boolean
+  error?: Error
+}
+
+export class RecommendationShelfErrorBoundary extends Component<Props, State> {
+  constructor(props: Props) {
+    super(props)
+    this.state = { hasError: false }
+  }
+
+  static getDerivedStateFromError(error: Error): State {
+    return {
+      hasError: true,
+      error,
+    }
+  }
+
+  componentDidCatch(error: Error, errorInfo: ErrorInfo) {
+    console.error('RecommendationShelf Error:', error, errorInfo)
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return null // Ou um fallback UI
+    }
+
+    return this.props.children
+  }
+}
+```
+
+---
+
+## 6. Interfaces e Composição {#interfaces}
+
+### store/interfaces.json
+
+```json
+{
+  "recommendation-shelf": {
+    "component": "RecommendationShelf",
+    "required": ["list-context.product-list-static"],
+    "content": {
+      "$ref": "#/definitions/RecommendationShelf"
+    }
+  },
+  "custom-shelf": {
+    "component": "CustomShelf",
+    "allowed": ["product-summary"],
+    "composition": "children"
+  },
+  "newsletter-form": {
+    "component": "NewsletterForm",
+    "render": "client"
+  }
+}
+```
+
+### Propriedades de Interfaces
+
+| Propriedade | Descrição | Exemplo |
+|-------------|-----------|---------|
+| `component` | Nome do componente React | `"RecommendationShelf"` |
+| `required` | Blocos filhos obrigatórios | `["list-context.product-list-static"]` |
+| `allowed` | Blocos filhos permitidos | `["product-summary", "rich-text"]` |
+| `composition` | Tipo de composição | `"children"` ou `"blocks"` |
+| `render` | Renderização | `"server"` ou `"client"` |
+| `device` | Dispositivo específico | `"mobile"` ou `"desktop"` |
+
+---
+
+## 7. Internacionalização (i18n) {#i18n}
+
+### Estrutura de Mensagens
+
+```
+messages/
+├── context.json    # Contextos e categorias
+├── en.json         # Inglês
+├── pt.json         # Português
+├── es.json         # Espanhol
+├── fr.json         # Francês
+└── ...
+```
+
+### Uso no Código
+
+```typescript
+// CORRETO - Usando react-intl
+import { FormattedMessage, defineMessages, useIntl } from 'react-intl'
+
+const messages = defineMessages({
+  addToCart: {
+    id: 'store/custom-shelf.add-to-cart',
+    defaultMessage: 'Add to Cart',
+  },
+  outOfStock: {
+    id: 'store/custom-shelf.out-of-stock',
+    defaultMessage: 'Out of Stock',
+  }
+})
+
+const CustomShelf: React.FC = () => {
+  const intl = useIntl()
+  
+  return (
+    <div>
+      <h2>
+        <FormattedMessage id="store/custom-shelf.title" defaultMessage="Featured Products" />
+      </h2>
+      <button>
+        {intl.formatMessage(messages.addToCart)}
+      </button>
+    </div>
+  )
+}
+```
+
+---
+
+## 8. Performance e Otimizações {#performance}
+
+### Lazy Loading de Imagens
+
+```typescript
+// CORRETO - Lazy loading com intersection observer
+import { useLazyLoadImages } from 'vtex.render-runtime'
+
+const ProductImage: React.FC<{ src: string }> = ({ src }) => {
+  const { lazyLoad } = useLazyLoadImages()
+  
+  return (
+    <img 
+      src={src}
+      loading="lazy"
+      data-lazy={lazyLoad}
+    />
+  )
+}
+```
+
+### canUseDOM para SSR
+
+```typescript
+// CORRETO - Verificar ambiente cliente
+import { canUseDOM } from 'vtex.render-runtime'
+
+const CustomComponent: React.FC = () => {
+  useEffect(() => {
+    if (!canUseDOM) return
+    
+    // Código que só roda no cliente
+    window.addEventListener('scroll', handleScroll)
+    
+    return () => {
+      window.removeEventListener('scroll', handleScroll)
+    }
+  }, [])
+  
+  return <div>...</div>
+}
+```
+
+### Memoização
+
+```typescript
+// CORRETO - useMemo para cálculos pesados
+import { useMemo } from 'react'
+
+const ProductList: React.FC<{ products: Product[] }> = ({ products }) => {
+  const sortedProducts = useMemo(() => {
+    return products.sort((a, b) => b.price - a.price)
+  }, [products])
+  
+  return (
+    <ul>
+      {sortedProducts.map(product => (
+        <li key={product.id}>{product.name}</li>
+      ))}
+    </ul>
+  )
+}
+```
+
+---
+
+## Checklist de Boas Práticas
+
+### Estrutura e Organização
+- [ ] Manifest.json com vendor, name, version corretos?
+- [ ] Blocos organizados em pastas por contexto (home/, pdp/, search/)?
+- [ ] Arquivos em kebab-case com .jsonc?
+- [ ] interfaces.json configurado para blocos customizados?
+
+### Schemas e i18n
+- [ ] Schemas com referências a mensagens i18n?
+- [ ] defineMessages para todas as strings do Site Editor?
+- [ ] Traduções em en.json, pt.json, es.json?
+- [ ] Valores default sensatos em schemas?
+
+### Componentes React
+- [ ] StorefrontFunctionComponent tipado?
+- [ ] Early returns para validações?
+- [ ] Error Boundaries para componentes críticos?
+- [ ] canUseDOM antes de acessar APIs do browser?
+
+### CSS Handles
+- [ ] useCssHandles com array const?
+- [ ] Handles em camelCase descritivos?
+- [ ] Customização CSS documentada?
+
+### Performance
+- [ ] Lazy loading em imagens?
+- [ ] useMemo para cálculos pesados?
+- [ ] useCallback para handlers?
+- [ ] Verificação canUseDOM para SSR?
+
+## Exemplo Completo: Custom Shelf
+
+```typescript
+// react/CustomShelf.tsx
+import React, { useMemo } from 'react'
+import { defineMessages, useIntl } from 'react-intl'
+import { useCssHandles } from 'vtex.css-handles'
+import { useProduct } from 'vtex.product-context'
+
+defineMessages({
+  title: {
+    id: 'admin/editor.custom-shelf.title',
+    defaultMessage: 'Shelf Title',
+  },
+  showPrices: {
+    id: 'admin/editor.custom-shelf.show-prices',
+    defaultMessage: 'Show Prices',
+  }
+})
+
+const CSS_HANDLES = [
+  'container',
+  'title',
+  'productList',
+  'productItem',
+  'productImage',
+  'productName',
+  'productPrice'
+] as const
+
+type Props = {
+  title?: string
+  maxProducts?: number
+  showPrices?: boolean
+}
+
+const CustomShelf: StorefrontFunctionComponent<Props> = ({
+  title = 'Featured Products',
+  maxProducts = 4,
+  showPrices = true
+}) => {
+  const handles = useCssHandles(CSS_HANDLES)
+  const intl = useIntl()
+  const productContext = useProduct()
+  
+  const validatedMaxProducts = useMemo(() => {
+    return Math.min(Math.max(maxProducts, 1), 12)
+  }, [maxProducts])
+  
+  return (
+    <div className={handles.container}>
+      <h2 className={handles.title}>{title}</h2>
+      <ul className={handles.productList}>
+        {/* Product items */}
+      </ul>
+    </div>
+  )
+}
+
+CustomShelf.schema = {
+  title: 'admin/editor.custom-shelf',
+  type: 'object',
+  properties: {
+    title: {
+      title: 'admin/editor.custom-shelf.title',
+      type: 'string',
+      default: 'Featured Products'
+    },
+    maxProducts: {
+      title: 'admin/editor.custom-shelf.max-products',
+      type: 'number',
+      default: 4,
+      minimum: 1,
+      maximum: 12
+    },
+    showPrices: {
+      title: 'admin/editor.custom-shelf.show-prices',
+      type: 'boolean',
+      default: true
+    }
+  }
+}
+
+export default CustomShelf
+```
+
+```json
+// store/interfaces.json
+{
+  "custom-shelf": {
+    "component": "CustomShelf",
+    "allowed": ["product-summary"],
+    "composition": "children"
+  }
+}
+```
+
+```json
+// messages/en.json
+{
+  "admin/editor.custom-shelf": "Custom Shelf",
+  "admin/editor.custom-shelf.title": "Shelf Title",
+  "admin/editor.custom-shelf.max-products": "Maximum Products",
+  "admin/editor.custom-shelf.show-prices": "Show Prices"
+}
+```

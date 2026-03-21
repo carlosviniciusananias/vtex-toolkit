@@ -7,8 +7,13 @@ globs: ["cms/**", "src/**"]
 
 Diretrizes para desenvolvimento de lojas utilizando FastStore, focando em modularidade, extensibilidade e integração com Headless CMS.
 
+## Validação de Configuração (CRÍTICO)
+- Antes de executar qualquer comando `@new-faststore-*`, verifique se o arquivo `discovery.config.js` existe na raiz.
+- Se não existir, solicite o `storeId` (account) ao usuário.
+
 ## Consulta de Boas Práticas (Opcional - Recomendado)
-- Antes de iniciar qualquer implementação complexa de Estilo, CMS ou Componentes, utilize a skill `faststore-consultant` para buscar as diretrizes oficiais em `developers.vtex.com`.
+- Antes de iniciar qualquer implementação complexa de Estilo, CMS ou Componentes, utilize a skill `faststore-best-practices` para garantir padrões de estrutura e performance.
+- Utilize a skill `faststore-consultant` para buscar as diretrizes oficiais em `developers.vtex.com`.
 
 ## Comandos de Geração
 
@@ -18,23 +23,61 @@ Diretrizes para desenvolvimento de lojas utilizando FastStore, focando em modula
     - `cms/content-types.json`: Define a estrutura das páginas e configurações globais.
     - `cms/sections.json`: Define os blocos de conteúdo que podem ser adicionados às páginas.
 3.  **Mapeamento (CRÍTICO)**: O `name` definido em `sections.json` deve ser **exatamente igual** ao nome do componente React em `src/components/`. As propriedades do schema são passadas diretamente como props para o componente.
-4.  **Referências**: Basear-se em `https://raw.githubusercontent.com/carlosviniciusananias/vtex-toolkit/main/examples/faststore/cms/`.
+4.  **Referências**: Basear-se em `https://raw.githubusercontent.com/carlosviniciusananias/vtex-toolkit/main/examples/faststore/cms/` e `https://github.com/vtex-sites/playground.store/tree/main/cms/faststore`.
 
 ### @new-faststore-components - Criação de Componentes e Overrides
 1.  **Atomic Design**: Organizar componentes em `src/components/` (atomic, molecules, organisms).
 2.  **Overrides**: Customizações de componentes nativos em `src/components/overrides/` usando `SectionOverride`.
 3.  **Exportação**: Registrar obrigatoriamente em `src/components/index.tsx`.
-4.  **Referências**: Basear-se em `https://raw.githubusercontent.com/carlosviniciusananias/vtex-toolkit/main/examples/faststore/src/components/`.
+4.  **Referências**: Basear-se em `https://raw.githubusercontent.com/carlosviniciusananias/vtex-toolkit/main/examples/faststore/src/components/` e `https://github.com/vtex-sites/playground.store/tree/main/src/components`.
 
 ### @new-faststore-resolvers - Lógica de Dados e GraphQL
 1.  **Fragments**: Definir em `src/fragments/` para estender queries nativas.
 2.  **Resolvers**: Implementar em `src/graphql/vtex/resolvers/` e registrar no `index.ts` da pasta.
 3.  **TypeDefs**: Definir o esquema em `src/graphql/vtex/typeDefs/`.
-4.  **Referências**: Basear-se em `https://raw.githubusercontent.com/carlosviniciusananias/vtex-toolkit/main/examples/faststore/src/graphql/` e `src/fragments/`.
+4.  **Referências**: Basear-se em `https://raw.githubusercontent.com/carlosviniciusananias/vtex-toolkit/main/examples/faststore/src/graphql/` e `https://github.com/vtex-sites/playground.store/tree/main/src/fragments`.
 
-## Referências Obrigatórias (Fonte de Verdade)
+## Exemplos
 
-Utilize os arquivos na pasta `https://raw.githubusercontent.com/carlosviniciusananias/vtex-toolkit/main/examples/faststore/` como única fonte de verdade:
+### Section Override V2 (Customizando Alerta)
+```tsx
+import { getOverriddenSection } from '@faststore/core'
+
+const MyAlert = (props) => {
+  return <Alert {...props} icon={props.customIcon} />
+}
+
+export default getOverriddenSection({
+  Section: MyAlert,
+})
+```
+
+### API Extension (Installments no Resolver)
+```typescript
+const resolvers = {
+  Product: {
+    installments: (root, args, context) => {
+      return context.clients.vtex.getInstallments(root.id)
+    },
+  },
+}
+```
+
+### Analytics (Custom Event)
+```typescript
+import { sendAnalyticsEvent } from '@faststore/sdk'
+
+const handleNewsletter = (data) => {
+  sendAnalyticsEvent({
+    name: 'newsletter_subscribe',
+    params: { email: data.email },
+  })
+}
+```
+
+## Referências Obrigatórias
+
+Utilize os arquivos na pasta `https://raw.githubusercontent.com/carlosviniciusananias/vtex-toolkit/main/examples/faststore/` e `https://github.com/vtex-sites/playground.store`
 - **CMS**: `https://raw.githubusercontent.com/carlosviniciusananias/vtex-toolkit/main/examples/faststore/cms/content-types.json` e `sections.json`.
 - **Componentes**: `https://raw.githubusercontent.com/carlosviniciusananias/vtex-toolkit/main/examples/faststore/src/components/organisms/SEOText/index.tsx`.
 - **Overrides**: `https://raw.githubusercontent.com/carlosviniciusananias/vtex-toolkit/main/examples/faststore/src/components/overrides/Breadcrumb.tsx`.
@@ -42,6 +85,7 @@ Utilize os arquivos na pasta `https://raw.githubusercontent.com/carlosviniciusan
 
 ## Checklist de Validação
 
+- [ ] O arquivo `discovery.config.js` existe ou o `storeId` foi solicitado?
 - [ ] O nome da seção em `cms/sections.json` é idêntico ao nome do componente React?
 - [ ] As props do componente React refletem exatamente as propriedades definidas no schema do CMS?
 - [ ] O componente segue o padrão Atomic Design?

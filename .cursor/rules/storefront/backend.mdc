@@ -5,34 +5,368 @@ alwaysApply: true
 ---
 
 # VTEX IO Backend Generation Workflow
-
+ 
 Diretrizes para criação de serviços robustos e escaláveis no padrão Full Stack.
-
+ 
 > [!IMPORTANT]
 > **PROIBIDO** consultar APIs externas ou Skills antes de validar a estrutura nos exemplos oficiais em "Referência Obrigatória".
-
+ 
 ## Destino Obrigatório
 - Todas as implementações em `node/`.
 - `https://github.com/carlosviniciusananias/vtex-toolkit/tree/main/examples/` apenas para consulta.
-
+ 
 ## Workflow de Geração (@new-service)
-
-1. **Consulta de API**: Usar `vtex-api-consultant` para endpoints e auth.
+ 
+1. **Consulta de API e Boas Práticas**: 
+   - Usar `vtex-api-consultant` para endpoints e auth. 
+   - Consultar proativamente `vtex-io-services-best-practices` para padrões de nomenclatura e estrutura de pastas.
+   - Consultar `.cursor/docs/TROUBLESHOOTING.md` para erros comuns de integração.
+ 
 2. **Clients (`node/clients/`)**: 
-   - `JanusClient` (VTEX) ou `ExternalClient` (Terceiros).
-   - Extensão de `MasterData` para métodos customizados.
-   - Registrar em `node/clients/index.ts`.
-3. **Middlewares (`node/middlewares/`)**: Lógica de consumo, `co-body` e `try/catch`.
+ 
+### REGRA CRÍTICA: Clientes Nativos vs Customizados
+ 
+**SEMPRE verificar se o cliente já existe no `@vtex/clients` ANTES de criar qualquer implementação customizada.**
+ 
+#### Clientes Nativos Disponíveis (NÃO CRIAR):
+- `MasterData` - Acesso completo a entidades do Master Data (CL, AD, etc.)
+- `Catalog` - Produtos, SKUs, categorias, especificações
+- `Checkout` - Carrinho, simulação de envio, OrderForm
+- `OMS` - Pedidos, status, faturas
+- `Logistics` - Estoque, docas, transportadoras
+- `Suggestions` - Sugestões de produtos e sellers
+- `VBase` - Armazenamento chave-valor
+- `Apps` - Configurações de aplicações
+ 
+#### Quando USAR clientes nativos:
+```typescript
+// CORRETO - Usar cliente nativo direto
+import { Clients } from './clients'
+ 
+export default new Service<Clients>({
+  routes: {
+    updateClient: method({
+      POST: [updateClientMiddleware]
+    })
+  }
+})
+ 
+// No middleware
+export async function updateClientMiddleware(ctx: Context, next: () => Promise<void>) {
+  const { clients } = ctx
+  const data = await json(ctx.req)
+  
+  // Cliente nativo MasterData já disponível
+  await clients.masterdata.createOrUpdateEntireDocument({
+    dataEntity: 'CL',
+    id: data.email,
+    fields: data
+  })
+  
+  ctx.status = 200
+  ctx.body = { success: true }
+  
+  await next()
+}
+```
+ 
+#### Quando CRIAR cliente customizado:
+Somente quando:
+1. **Não existe no `@vtex/clients`**
+2. **Precisa de métodos específicos** não cobertos pela API nativa
+3. **API externa** (terceiros)
+ 
+```typescript
+// CORRETO - Criar apenas para APIs não cobertas
+// node/clients/CustomAPIClient.ts
+import { JanusClient } from '@vtex/api'
+ 
+export class CustomAPIClient extends JanusClient {
+  public async getSpecialData(id: string) {
+    return this.http.get(`/api/custom/${id}`, {
+      metric: 'custom-api-get'
+    })
+  }
+}
+ 
+// node/clients/index.ts
+import { IOClients } from '@vtex/api'
+import { CustomAPIClient } from './CustomAPIClient'
+ 
+export class Clients extends IOClients {
+  public get customAPI() {
+    return this.getOrSet('customAPI', CustomAPIClient)
+  }
+}
+```
+ 
+#### INCORRETO - Não criar wrapper para clientes nativos:
+```typescript
+// ERRADO - MasterData já existe no @vtex/clients
+export class CLClient extends MasterData {
+  public async getCL(email: string) {
+    return this.getDocument({ /* ... */ })
+  }
+}
+ 
+// CORRETO - Usar direto no middleware
+await ctx.clients.masterdata.getDocument({
+  dataEntity: 'CL',
+  id: email,
+  fields: ['email', 'firstName', 'lastName']
+})
+```
+ 
+3. **Middlewares (`node/middlewares/`)**: 
+   - Lógica de consumo direto dos clientes nativos
+   - `co-body` para parsing de requisições
+   - `try/catch` obrigatório com status HTTP apropriados
+   - Um middleware por operação (criar, ler, atualizar, deletar)
+ 
 4. **Resolvers (`node/resolvers/`)**: Queries/Mutations. Exportar em `node/resolvers/index.ts`.
+ 
+## 5. GraphQL Schemas e Resolvers (Opcional)
+ 
+Quando o serviço precisa expor dados via GraphQL (consultas do front-end).
+ 
+### Quando usar:
+- Front-end precisa consultar dados customizados
+- Agregação de múltiplas fontes de dados
+- Queries complexas que não são cobertas por APIs REST
+ 
+### Estrutura:
+```
+graphql/
+└── schema.graphql
+ 
+node/
+├── resolvers/
+│   └── index.ts
+└── index.ts
+```
+ 
+### Implementação:
+ 
+**1. Criar `graphql/schema.graphql`:**
+```graphql
+type Query {
+  # Consultar pedido por ID
+  getOrder(orderId: String!): Order
+}
+ 
+type Order {
+  items: OrderItem[]
+  createdDate: string
+}
+ 
+type OrderItem {
+  id: String!
+  name: String!
+  quantity: Int!
+  price: Float!
+}
+```
+ 
+**2. Criar `node/resolvers/index.ts`:**
+```typescript
+export const resolvers = {
+  Query: {
+    getOrder: async (
+      _: unknown,
+      { orderId }: { orderId: string },
+      ctx: Context
+    ) => {
+      const { clients } = ctx
+      
+      try {
+        const order = await clients.oms.order(orderId)
+        
+        return {
+          orderId: order.orderId,
+          status: order.status,
+          items: order.items.map(item => ({
+            id: item.id,
+            name: item.name,
+            quantity: item.quantity,
+            price: item.price
+          })),
+          total: order.value,
+          createdDate: order.creationDate
+        }
+      } catch (error) {
+        console.error('Error fetching order:', error)
+        throw new Error('Order not found')
+      }
+    },
+  }
+}
+```
+ 
+**3. Adicionar builder ao `manifest.json`:**
+```json
+{
+  "builders": {
+    "node": "7.x",
+    "graphql": "1.x"
+  }
+}
+```
+ 
+**4. Adicionar dependência:**
+```json
+{
+  "dependencies": {
+    "vtex.graphql-server": "1.x"
+  }
+}
+```
+ 
+**5. Registrar resolvers em `node/index.ts`:**
+```typescript
+import { resolvers } from './resolvers'
+ 
+export default new Service({
+  clients,
+  graphql: {
+    resolvers
+  },
+  routes: {
+    // ... suas rotas
+  }
+})
+```
+ 
+### Tipagens TypeScript:
+ 
+**Criar `node/types/graphql.d.ts`:**
+```typescript
+export interface Order {
+  items: OrderItem[]
+  createdDate: string
+}
+ 
+export interface OrderItem {
+  id: string
+  name: string
+  quantity: number
+  price: number
+}
+```
+ 
+### Políticas necessárias:
+ 
+```json
+{
+  "policies": [
+    {
+      "name": "vtex.graphql-server:resolve-graphql"
+    }
+  ]
+}
+```
+ 
 5. **Rotas (`node/service.json`)**: Definir `path` e `public`.
 6. **Orquestração (`node/index.ts`)**: Registrar resolvers e associar middlewares às rotas.
 7. **Políticas de Acesso**: Se usar `ExternalClient`, garantir que o host esteja em `policies` no `manifest.json`.
-
+ 
+## 8. Settings Schema (CRÍTICO para Backends com Configurações)
+ 
+Sempre que um serviço precisar de configurações sensíveis (API keys, tokens, URLs externas), adicionar `settingsSchema` ao `manifest.json`:
+ 
+### Quando usar:
+- Integrações com APIs externas
+- Credenciais de autenticação
+- URLs configuráveis por ambiente
+- Qualquer dado que não deve estar hardcoded
+ 
+### Implementação:
+ 
+**1. Adicionar ao `manifest.json`:**
+```json
+{
+  "settingsSchema": {
+    "title": "Configurações do Serviço",
+    "type": "object",
+    "properties": {
+      "appKey": {
+        "type": "string",
+        "title": "App Key VTEX",
+        "description": "Chave de acesso da aplicação"
+      },
+      "appToken": {
+        "type": "string",
+        "title": "App Token VTEX",
+        "description": "Token de autenticação"
+      }
+    }
+  }
+}
+```
+ 
+**2. Criar helper `node/helpers/getAppSettings.ts`:**
+```typescript
+import type { Context } from '@vtex/api'
+ 
+export interface AppSettings {
+  appKey: string
+  appToken: string
+}
+ 
+export const getAppSettings = async (ctx: Context): Promise<AppSettings> => {
+  const app = `${ctx.vtex.account}.${process.env.VTEX_APP_NAME}`
+  const settings = await ctx.clients.apps.getAppSettings(app)
+  
+  return settings as AppSettings
+}
+```
+ 
+**3. Criar middleware `node/middlewares/appSettings.ts`:**
+```typescript
+import { getAppSettings } from '../../helpers/getAppSettings'
+ 
+export default async function appSettings(
+  ctx: Context,
+  next: () => Promise<void>
+) {
+  const settings = await getAppSettings(ctx)
+  
+  ctx.state.settings = settings
+  
+  await next()
+}
+```
+ 
+**4. Adicionar tipagem ao `node/index.ts`:**
+```typescript
+import type { AppSettings } from './helpers/getAppSettings'
+ 
+interface State extends RecorderState {
+  settings: AppSettings
+  // ...
+}
+```
+ 
+**5. Usar no middleware:**
+```typescript
+export default new Service({
+  routes: {
+    myRoute: method({
+      POST: [
+        appSettings,
+        myMiddleware
+      ]
+    })
+  }
+})
+```
+ 
 ## Referência Obrigatória
 - `https://raw.githubusercontent.com/carlosviniciusananias/vtex-toolkit/main/examples/storefront/back-end/node/`.
-
-## Checklist
-- [ ] Client registrado em `index.ts`?
-- [ ] Middleware com `try/catch` e status HTTP?
-- [ ] Resolvers exportados?
+ 
+## Checklist Final
+- [ ] Verificou se cliente já existe no `@vtex/clients`?
+- [ ] Se cliente nativo existe, está usando direto sem wrapper?
+- [ ] Middleware com `try/catch` e status HTTP apropriados?
+- [ ] Resolvers exportados (se GraphQL)?
 - [ ] Rota em `service.json` e associada em `index.ts`?
+- [ ] Políticas de acesso configuradas no `manifest.json`?

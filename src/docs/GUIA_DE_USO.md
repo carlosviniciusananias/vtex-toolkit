@@ -23,8 +23,6 @@ Este comando irá:
 3. Instalar as habilidades (skills) em `.cursor/skills/`.
 4. Instalar os atalhos de comandos em `.cursor/commands/`.
 
----
-
 ## O que está incluído?
 
 ### 1. Regras Inteligentes (.mdc)
@@ -54,21 +52,34 @@ Localizadas em `.cursor/skills/`, permitem que o agente consulte documentações
 oficiais:
 
 - `vtex-api-consultant`: Consulta de endpoints e autenticação de APIs VTEX.
-- `faststore-consultant`: Melhores práticas de componentes e CMS FastStore.
+- `faststore-consultant`: Melhores práticas de componentes FastStore.
 
 ### 3. Comandos Rápidos
 
 Localizados em `.cursor/commands/`, servem como atalhos para os workflows
 `@new-*`.
 
----
-
 ## Como Usar
 
 Após a instalação, reinicie o seu **Cursor IDE**. Você pode ativar os workflows
 digitando `@` seguido do comando no chat ou Composer:
 
+### Fluxo de Validação de Configuração (Novo)
+
+Ao executar qualquer comando de geração pela primeira vez em um projeto, o agente realizará uma validação automática:
+
+- **VTEX IO**: Se o `manifest.json` não for encontrado, será solicitado o nome da **conta** e do **projeto**.
+- **FastStore**: Se o `discovery.config.js` não for encontrado, será solicitado o **storeId** (conta).
+
 > **Nota Importante**: Ao utilizar qualquer comando de geração (`@new-*`), sempre forneça uma breve descrição do que você deseja realizar. Se o comando for enviado sozinho, o agente solicitará mais informações antes de agir.
+
+### Referências e Exemplos
+
+O toolkit utiliza duas fontes principais de verdade para código e padrões:
+1. **VTEX Toolkit Examples**: Padrões estruturais e implementações recomendadas.
+2. **FastStore Playground**: Exemplos reais de Section Overrides V2, API Extensions e Analytics.
+
+---
 
 ### Comandos Storefront (VTEX IO)
 
@@ -87,8 +98,6 @@ digitando `@` seguido do comando no chat ou Composer:
 - `@health`: Varredura de integridade e performance.
 - `@format`: Formatação de código via Prettier.
 - `@pr-ready`: Prepara o resumo e validações para o seu Pull Request.
-
----
 
 ## Boas Práticas e Segurança
 

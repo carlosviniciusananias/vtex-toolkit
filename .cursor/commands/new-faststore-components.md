@@ -8,6 +8,7 @@ Este comando automatiza a criação de componentes e overrides na FastStore.
 - **target**: (Apenas para override) Nome do componente nativo a ser sobrescrito.
 
 ## Workflow Resumido
+0. **Validar Config**: Verificar se `discovery.config.js` existe (se não, solicitar `storeId`).
 1. **Component**: Criação em `src/components/` seguindo Atomic Design.
 2. **Mapeamento**: O nome do componente deve ser idêntico ao `name` definido em `cms/sections.json`.
 3. **Override**: Uso de `SectionOverride` em `src/components/overrides/`.

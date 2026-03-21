@@ -1,0 +1,551 @@
+---
+name: vtex-io-services-best-practices
+description: >
+  Validar e guiar implementação de serviços Node.js no VTEX IO:
+  - Nomenclatura de funções, middlewares e clients
+  - Padrões de rotas REST (verbos HTTP, recursos no plural)
+  - Estrutura de arquivos e organização de pastas
+  - Tratamento de erros e status HTTP apropriados
+  - Tipos TypeScript e interfaces
+  - Uso correto de clientes nativos vs customizados
+  Trigger: durante criação de serviços backend, middlewares, rotas, ou quando mencionar "boas práticas", "padrões", "nomenclatura", "organização"
+---
+
+# VTEX IO Backend Best Practices
+
+Convenções de nomenclatura, estrutura e padrões de mercado para desenvolvimento de serviços Node.js no VTEX IO.
+
+## Índice
+1. [Nomenclatura de Funções e Middlewares](#nomenclatura)
+2. [Padrões de Rotas REST](#rotas)
+3. [Estrutura de Arquivos](#estrutura)
+4. [Tratamento de Erros](#erros)
+5. [Tipos TypeScript](#tipos)
+
+---
+
+## 1. Nomenclatura de Funções e Middlewares {#nomenclatura}
+
+### Middlewares
+
+**Padrão:** `verbo + Entidade + Ação`
+
+```typescript
+// CORRETO - Verbos imperativos, nomes claros
+export async function getClientById(ctx: Context, next: () => Promise<void>) {}
+export async function createClient(ctx: Context, next: () => Promise<void>) {}
+export async function updateClientAddress(ctx: Context, next: () => Promise<void>) {}
+export async function deleteClient(ctx: Context, next: () => Promise<void>) {}
+export async function listClients(ctx: Context, next: () => Promise<void>) {}
+
+// INCORRETO - Nomes vagos ou mal formatados
+export async function getCL(ctx: Context, next: () => Promise<void>) {} // Sigla não clara
+export async function middleware1(ctx: Context, next: () => Promise<void>) {} // Genérico
+export async function ClientGet(ctx: Context, next: () => Promise<void>) {} // PascalCase incorreto
+export async function client_update(ctx: Context, next: () => Promise<void>) {} // snake_case
+```
+
+### Helpers e Utilitários
+
+**Padrão:** `verbo + Substantivo` ou `get + Tipo`
+
+```typescript
+// CORRETO
+export const validateEmail = (email: string): boolean => {}
+export const formatAddress = (address: Address): string => {}
+export const parseOrderData = (data: unknown): Order => {}
+export const getAppSettings = async (ctx: Context): Promise<AppSettings> => {}
+
+// INCORRETO
+export const validator = (email: string): boolean => {} // Muito genérico
+export const doFormat = (address: Address): string => {} // "do" desnecessário
+export const settings = async (ctx: Context): Promise<AppSettings> => {} // Não é verbo
+```
+
+### Clients Customizados (quando necessário)
+
+**Padrão:** `NomeAPI + Client` (PascalCase)
+
+```typescript
+// CORRETO
+export class ShippingAPIClient extends JanusClient {}
+export class PaymentGatewayClient extends ExternalClient {}
+export class NotificationServiceClient extends JanusClient {}
+
+// INCORRETO
+export class shippingClient extends JanusClient {} // camelCase
+export class Client extends JanusClient {} // Muito genérico
+export class API extends JanusClient {} // Não descreve função
+```
+
+---
+
+## 2. Padrões de Rotas REST {#rotas}
+
+### Convenções REST Padrão
+
+Seguir padrão RESTful com recursos no plural:
+
+```json
+// CORRETO - service.json
+{
+  "routes": {
+    "listClients": {
+      "path": "/_v/clients",
+      "public": false
+    },
+    "getClient": {
+      "path": "/_v/clients/:id",
+      "public": false
+    },
+    "createClient": {
+      "path": "/_v/clients",
+      "public": false
+    },
+    "updateClient": {
+      "path": "/_v/clients/:id",
+      "public": false
+    },
+    "deleteClient": {
+      "path": "/_v/clients/:id",
+      "public": false
+    }
+  }
+}
+```
+
+```typescript
+// CORRETO - Mapeamento em node/index.ts
+export default new Service({
+  routes: {
+    listClients: method({
+      GET: [listClients]
+    }),
+    getClient: method({
+      GET: [getClientById]
+    }),
+    createClient: method({
+      POST: [validateClientData, createClient]
+    }),
+    updateClient: method({
+      PUT: [validateClientData, updateClient]
+    }),
+    deleteClient: method({
+      DELETE: [deleteClient]
+    })
+  }
+})
+```
+
+### Matriz de Verbos HTTP
+
+| Verbo HTTP | Ação | Rota Exemplo | Idempotente | Safe |
+|------------|------|--------------|-------------|------|
+| `GET` | Listar/Buscar | `GET /_v/clients` | ✅ | ✅ |
+| `GET` | Buscar por ID | `GET /_v/clients/:id` | ✅ | ✅ |
+| `POST` | Criar | `POST /_v/clients` | ❌ | ❌ |
+| `PUT` | Atualizar completo | `PUT /_v/clients/:id` | ✅ | ❌ |
+| `PATCH` | Atualizar parcial | `PATCH /_v/clients/:id` | ❌ | ❌ |
+| `DELETE` | Remover | `DELETE /_v/clients/:id` | ✅ | ❌ |
+
+### Rotas com Relacionamentos
+
+```json
+// CORRETO - Recursos aninhados
+{
+  "routes": {
+    "getClientOrders": {
+      "path": "/_v/clients/:clientId/orders",
+      "public": false
+    },
+    "getClientOrder": {
+      "path": "/_v/clients/:clientId/orders/:orderId",
+      "public": false
+    }
+  }
+}
+```
+
+### Rotas para Ações Customizadas
+
+Quando não se encaixa em CRUD padrão:
+
+```json
+// CORRETO - Ações como subrecursos
+{
+  "routes": {
+    "sendClientNotification": {
+      "path": "/_v/clients/:id/notify",
+      "public": false
+    },
+    "validateClientEmail": {
+      "path": "/_v/clients/validate-email",
+      "public": true
+    }
+  }
+}
+```
+
+### Anti-padrões Comuns
+
+```json
+// INCORRETO
+{
+  "routes": {
+    "getCL": {
+      "path": "/_v/getCL", // Verbo na rota
+      "public": false
+    },
+    "client": {
+      "path": "/_v/client/:id", // Singular inconsistente
+      "public": false
+    },
+    "createNewClient": {
+      "path": "/_v/client-new", // Hífen desnecessário
+      "public": false
+    }
+  }
+}
+```
+
+---
+
+## 3. Estrutura de Arquivos {#estrutura}
+
+### Organização Obrigatória
+
+```
+node/
+├── clients/              # Apenas clientes customizados (não nativos)
+│   ├── index.ts         # Exporta classe Clients
+│   └── CustomAPI.ts     # Cliente específico (se necessário)
+├── middlewares/         # Lógica de negócio
+│   ├── clients/         # Operações de clientes
+│   │   ├── createClient.ts
+│   │   ├── getClientById.ts
+│   │   ├── updateClient.ts
+│   │   ├── deleteClient.ts
+│   │   └── listClients.ts
+│   ├── orders/          # Operações de pedidos
+│   │   └── ...
+│   └── validators/      # Validações reutilizáveis
+│       ├── validateEmail.ts
+│       └── validateClientData.ts
+├── helpers/             # Funções auxiliares
+│   ├── getAppSettings.ts
+│   └── formatters.ts
+├── types/               # Tipagens TypeScript
+│   ├── clients.d.ts
+│   └── orders.d.ts
+├── resolvers/           # GraphQL (se aplicável)
+│   └── index.ts
+├── index.ts            # Orquestração principal
+└── service.json        # Definição de rotas
+```
+
+### Nomes de Arquivos
+
+```
+CORRETO:
+- createClient.ts (camelCase)
+- validateEmail.ts
+- getAppSettings.ts
+
+INCORRETO:
+- CreateClient.ts (PascalCase)
+- validate_email.ts (snake_case)
+- get-app-settings.ts (kebab-case)
+```
+
+---
+
+## 4. Tratamento de Erros {#erros}
+
+### Padrão Obrigatório em Middlewares
+
+```typescript
+// CORRETO - Try/catch com status HTTP apropriados
+export async function getClientById(ctx: Context, next: () => Promise<void>) {
+  const { id } = ctx.vtex.route.params
+  
+  try {
+    const client = await ctx.clients.masterdata.getDocument({
+      dataEntity: 'CL',
+      id,
+      fields: ['email', 'firstName', 'lastName', 'document']
+    })
+    
+    if (!client) {
+      ctx.status = 404
+      ctx.body = {
+        error: 'Client not found',
+        code: 'CLIENT_NOT_FOUND'
+      }
+      return
+    }
+    
+    ctx.status = 200
+    ctx.body = client
+  } catch (error) {
+    console.error('Error fetching client:', error)
+    
+    ctx.status = 500
+    ctx.body = {
+      error: 'Internal server error',
+      code: 'INTERNAL_ERROR',
+      message: error instanceof Error ? error.message : 'Unknown error'
+    }
+  }
+  
+  await next()
+}
+```
+
+### Códigos de Status HTTP
+
+| Código | Situação | Exemplo |
+|--------|----------|---------|
+| `200` | Sucesso | Recurso encontrado/atualizado |
+| `201` | Criado | Novo recurso criado |
+| `204` | Sem conteúdo | Deleção bem-sucedida |
+| `400` | Requisição inválida | Dados mal formatados |
+| `401` | Não autenticado | Token inválido |
+| `403` | Proibido | Sem permissão |
+| `404` | Não encontrado | Recurso inexistente |
+| `409` | Conflito | Recurso duplicado |
+| `422` | Entidade não processável | Validação falhou |
+| `500` | Erro interno | Erro inesperado |
+
+### Estrutura de Resposta de Erro
+
+```typescript
+interface ErrorResponse {
+  error: string        // Mensagem legível
+  code: string        // Código de erro único
+  details?: unknown   // Informações adicionais (opcional)
+}
+
+// CORRETO
+ctx.body = {
+  error: 'Email already registered',
+  code: 'EMAIL_DUPLICATE',
+  details: { email: data.email }
+}
+
+// INCORRETO
+ctx.body = 'Error' // String simples
+ctx.body = { message: 'Error' } // Sem código
+```
+
+---
+
+## 5. Tipos TypeScript {#tipos}
+
+### Interfaces de Domínio
+
+```typescript
+// CORRETO - node/types/clients.d.ts
+export interface Client {
+  id: string
+  email: string
+  firstName: string
+  lastName: string
+  document: string
+  phone?: string
+  createdAt: string
+  updatedAt: string
+}
+
+export interface CreateClientInput {
+  email: string
+  firstName: string
+  lastName: string
+  document: string
+  phone?: string
+}
+
+export interface UpdateClientInput extends Partial<CreateClientInput> {
+  id: string
+}
+```
+
+### Tipagem de Context State
+
+```typescript
+// CORRETO - node/index.ts
+import type { RecorderState } from '@vtex/api'
+import type { AppSettings } from './helpers/getAppSettings'
+
+interface State extends RecorderState {
+  settings: AppSettings
+  validatedData?: CreateClientInput
+}
+
+export default new Service<Clients, State>({
+  // ...
+})
+```
+
+---
+
+## Checklist de Boas Práticas
+
+### Antes de Implementar
+- [ ] Nome do middleware é claro e segue padrão `verbo + Entidade`?
+- [ ] Rota segue padrão REST com recursos no plural?
+- [ ] Cliente nativo verificado antes de criar customizado?
+- [ ] Estrutura de pastas organizada por domínio?
+
+### Durante Implementação
+- [ ] Try/catch em todos os middlewares?
+- [ ] Status HTTP apropriados para cada cenário?
+- [ ] Tipos TypeScript definidos para inputs/outputs?
+- [ ] Logs de erro com contexto suficiente?
+
+### Após Implementação
+- [ ] Testes de rotas funcionando?
+- [ ] Políticas de acesso configuradas?
+- [ ] Documentação das rotas no README?
+- [ ] Code review passou por checklist de nomenclatura?
+
+---
+
+## Exemplos Práticos Completos
+
+### CRUD Completo de Clientes
+
+**1. service.json:**
+```json
+{
+  "routes": {
+    "listClients": {
+      "path": "/_v/clients",
+      "public": false
+    },
+    "getClient": {
+      "path": "/_v/clients/:id",
+      "public": false
+    },
+    "createClient": {
+      "path": "/_v/clients",
+      "public": false
+    },
+    "updateClient": {
+      "path": "/_v/clients/:id",
+      "public": false
+    },
+    "deleteClient": {
+      "path": "/_v/clients/:id",
+      "public": false
+    }
+  }
+}
+```
+
+**2. node/middlewares/clients/createClient.ts:**
+```typescript
+import { json } from 'co-body'
+import type { Context } from '@vtex/api'
+import type { CreateClientInput } from '../../types/clients'
+
+export async function createClient(ctx: Context, next: () => Promise<void>) {
+  try {
+    const data: CreateClientInput = await json(ctx.req)
+    
+    // Validação
+    if (!data.email || !data.firstName || !data.lastName) {
+      ctx.status = 400
+      ctx.body = {
+        error: 'Missing required fields',
+        code: 'VALIDATION_ERROR',
+        details: { required: ['email', 'firstName', 'lastName'] }
+      }
+      return
+    }
+    
+    // Criar usando cliente nativo
+    const created = await ctx.clients.masterdata.createOrUpdateEntireDocument({
+      dataEntity: 'CL',
+      fields: {
+        email: data.email,
+        firstName: data.firstName,
+        lastName: data.lastName,
+        document: data.document,
+        phone: data.phone
+      }
+    })
+    
+    ctx.status = 201
+    ctx.body = {
+      id: created.Id,
+      message: 'Client created successfully'
+    }
+  } catch (error) {
+    console.error('Error creating client:', error)
+    
+    ctx.status = 500
+    ctx.body = {
+      error: 'Failed to create client',
+      code: 'CREATE_ERROR',
+      message: error instanceof Error ? error.message : 'Unknown error'
+    }
+  }
+  
+  await next()
+}
+```
+
+**3. node/index.ts:**
+```typescript
+import { Service } from '@vtex/api'
+import { Clients } from './clients'
+import { method } from '@vtex/api'
+
+import { createClient } from './middlewares/clients/createClient'
+import { getClientById } from './middlewares/clients/getClientById'
+import { updateClient } from './middlewares/clients/updateClient'
+import { deleteClient } from './middlewares/clients/deleteClient'
+import { listClients } from './middlewares/clients/listClients'
+
+export default new Service({
+  clients: {
+    implementation: Clients,
+    options: {
+      default: {
+        retries: 2,
+        timeout: 10000
+      }
+    }
+  },
+  routes: {
+    listClients: method({
+      GET: [listClients]
+    }),
+    getClient: method({
+      GET: [getClientById]
+    }),
+    createClient: method({
+      POST: [createClient]
+    }),
+    updateClient: method({
+      PUT: [updateClient]
+    }),
+    deleteClient: method({
+      DELETE: [deleteClient]
+    })
+  }
+})
+```
+
+---
+
+## Erros Comuns e Como Evitar
+
+| Erro | Problema | Solução |
+|------|----------|---------|
+| `CLClient extends MasterData` | Wrapper desnecessário | Usar `ctx.clients.masterdata` direto |
+| `GET /_v/getClient` | Verbo na rota | Usar `GET /_v/clients/:id` |
+| `middleware1.ts` | Nome genérico | Renomear para `getClientById.ts` |
+| Sem try/catch | Erro não tratado | Sempre adicionar try/catch |
+| Status 200 em erro | Status incorreto | Usar 4xx/5xx apropriados |
+| Tipos `any` | Sem type safety | Definir interfaces explícitas |

@@ -15,8 +15,11 @@ Padrões técnicos para novos componentes React.
 - Pasta `react/`. Componente em `react/components/{Nome}/index.tsx` e export em `react/{Nome}.tsx`.
 
 ## Workflow de Geração (@new-component)
-
-1. **Configuração**: Declarar em `store/interfaces.json`. Usar `StoreFrontFC`.
+ 
+1. **Configuração e Boas Práticas**: 
+   - Declarar em `store/interfaces.json`. Usar `StoreFrontFC`. 
+   - Consultar proativamente `storefront-components-best-practices` para padrões de hooks, i18n e performance.
+   - Consultar `.cursor/docs/TROUBLESHOOTING.md` para erros de interface ou export.
 2. **Implementação**: `useCssHandles`, `react-intl`, `useRuntime`/`useDevice`.
 3. **Contextos Nativos**: Utilizar hooks nativos quando necessário:
    - `vtex.product-context` (`useProduct`): Dados do SKU/Produto.
@@ -26,6 +29,223 @@ Padrões técnicos para novos componentes React.
    - `vtex.session-client` (`useRenderSession`): Dados da sessão/usuário.
    - `vtex.render-runtime` (`useRuntime`): Navegação e contexto de execução.
 4. **Site Editor**: Implementar `schema` estático.
+
+## 4. Estratégia de Estilização (CRÍTICO - Decidir antes de codificar)
+
+Existem DUAS abordagens para CSS em VTEX IO. **NUNCA misturar as duas no mesmo projeto.**
+
+### Como identificar o padrão do projeto?
+
+**Verificar componentes existentes:**
+```bash
+# Se encontrar imports assim:
+import './styles.global.css'
+# → Projeto usa CSS GLOBAL
+
+# Se encontrar código assim:
+const CSS_HANDLES = ['container', 'title']
+const handles = useCssHandles(CSS_HANDLES)
+# → Projeto usa CSS HANDLES
+```
+
+### OPÇÃO A: CSS Global (Padrão Americanas)
+
+**Quando usar:**
+- Projetos legados
+- Projetos que já usam `styles.global.css`
+- Quando simplicidade > customização externa
+
+**Estrutura:**
+```
+react/components/CustomComponent/
+├── CustomComponent.tsx
+└── styles.global.css  ← Arquivo de estilos
+```
+
+**Implementação no componente:**
+```typescript
+import React from 'react'
+import './styles.global.css'
+
+export default function CustomComponent() {
+  return (
+    <div className="customComponent">
+      <h1 className="customComponent__title">Título</h1>
+      <p className="customComponent__text">Texto</p>
+    </div>
+  )
+}
+```
+
+**Arquivo `styles.global.css`:**
+```css
+.customComponent {
+  padding: 20px;
+  background: #fff;
+}
+
+.customComponent__title {
+  font-size: 24px;
+  font-weight: bold;
+  color: #333;
+}
+
+.customComponent__text {
+  font-size: 16px;
+  color: #666;
+}
+```
+
+**Vantagens:**
+- Simples e direto
+- CSS colado no componente
+- Familiar para devs tradicionais
+
+**Desvantagens:**
+- Não customizável externamente via CSS Handles
+- Possível conflito de nomes de classes
+
+### OPÇÃO B: CSS Handles (Padrão VTEX Oficial)
+
+**Quando usar:**
+- Projetos novos
+- Quando clientes precisam customizar estilos
+- Padrão recomendado pela VTEX
+
+**Estrutura:**
+```
+react/components/CustomComponent/
+└── CustomComponent.tsx
+
+styles/css/
+└── vtex.{vendor}.{appName}.css  ← Estilos centralizados
+```
+
+**Implementação no componente:**
+```typescript
+import React from 'react'
+import { useCssHandles } from 'vtex.css-handles'
+
+const CSS_HANDLES = ['container', 'title', 'text'] as const
+
+export default function CustomComponent() {
+  const handles = useCssHandles(CSS_HANDLES)
+  
+  return (
+    <div className={handles.container}>
+      <h1 className={handles.title}>Título</h1>
+      <p className={handles.text}>Texto</p>
+    </div>
+  )
+}
+```
+
+**Dependência no `manifest.json`:**
+```json
+{
+  "dependencies": {
+    "vtex.css-handles": "1.x"
+  }
+}
+```
+
+**Arquivo `styles/css/vtex.{vendor}.{appName}.css`:**
+```css
+.container {
+  padding: 20px;
+  background: #fff;
+}
+
+.title {
+  font-size: 24px;
+  font-weight: bold;
+  color: #333;
+}
+
+.text {
+  font-size: 16px;
+  color: #666;
+}
+```
+
+**Vantagens:**
+- Customizável externamente (clientes podem sobrescrever)
+- Padrão oficial VTEX
+- Sem conflito de classes (namespaced)
+
+**Desvantagens:**
+- Mais setup inicial
+- CSS separado do componente
+
+### REGRA DE OURO:
+
+**ANTES de criar qualquer componente:**
+1. Verificar se o projeto já tem componentes
+2. Abrir um componente existente
+3. Ver qual padrão está sendo usado
+4. **SEGUIR O MESMO PADRÃO**
+
+**NUNCA:**
+- Misturar CSS Global e CSS Handles no mesmo projeto
+- Criar componente com CSS Handle em projeto que usa CSS Global
+- Criar componente com CSS Global em projeto que usa CSS Handles
+
+**Exemplo de validação:**
+```typescript
+// CORRETO - Projeto usa CSS Handles
+// Todos os componentes usam useCssHandles()
+
+// ERRADO - Projeto usa CSS Handles
+// Novo componente usa styles.global.css
+```
+
+## 5. Usar GraphQL no Front-end
+
+Quando o serviço expõe dados via GraphQL, utilize o `react-apollo` para consumir.
+
+### Implementação:
+
+**Criar query no React:**
+```typescript
+import { useQuery } from 'react-apollo'
+import gql from 'graphql-tag'
+
+const GET_ORDER_DETAILS = gql`
+  query GetOrderDetails($orderId: String!) {
+    getOrderDetails(orderId: $orderId) {
+      orderId
+      status
+      items {
+        id
+        name
+        quantity
+        price
+      }
+      total
+      createdDate
+    }
+  }
+`
+
+export default function OrderDetails({ orderId }: Props) {
+  const { data, loading, error } = useQuery(GET_ORDER_DETAILS, {
+    variables: { orderId }
+  })
+  
+  if (loading) return <div>Carregando...</div>
+  if (error) return <div>Erro ao carregar pedido</div>
+  
+  const order = data.getOrderDetails
+  
+  return (
+    <div>
+      <h1>Pedido {order.orderId}</h1>
+      <p>Status: {order.status}</p>
+      {/* ... */}
+    </div>
+  )
+}
+```
 5. **Auto-Healing (CRÍTICO)**: 
    - Ao criar um componente em um projeto de Storefront (onde o front-end é um app separado), o agente DEVE verificar se este app está listado como dependência no `manifest.json` do projeto de blocos (`store/`).
    - Se não estiver, sugira a inclusão imediata para garantir que os blocos JSONC reconheçam a interface.

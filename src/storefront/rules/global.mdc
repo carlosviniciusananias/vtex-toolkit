@@ -10,43 +10,52 @@ Regras de nível de projeto para automação de tarefas transversais, manutenç�
 
 ## Fluxo de Trabalho Obrigatório (CRÍTICO)
 
-Sempre que um comando de geração for acionado (ex: `@new-storefront-*`), o agente DEVE seguir esta ordem rigorosa:
+Sempre que um comando de geração for acionado (ex: `@new-storefront-*` ou `@new-faststore-*`), o agente DEVE seguir esta ordem rigorosa:
 
-1.  **Análise de Exemplos (Mandatório)**: Antes de qualquer ação, acesse as URLs em "Referências" para ler e analisar o padrão estrutural e de código nos exemplos oficiais do GitHub.
-2.  **Planejamento**: Proponha a implementação baseada estritamente nos padrões encontrados nos exemplos.
-3.  **Consulta Técnica (Opcional)**: Utilize as Skills (ex: `vtex-api-consultant`) APENAS se houver dúvidas sobre detalhes técnicos específicos (endpoints, auth, payloads) que não estejam claros nos exemplos.
-4.  **Implementação**: Execute a geração do código seguindo o plano aprovado.
+1.  **Validação de Configuração (Mandatório)**:
+    - **Storefront (VTEX IO)**: Se o arquivo `manifest.json` não existir na raiz, o agente **DEVE** perguntar ao usuário: "Qual é a conta (account) e qual o nome (name) atribuído ao projeto?".
+    - **FastStore**: Se o arquivo `discovery.config.js` não existir na raiz, o agente **DEVE** perguntar ao usuário: "Qual é o storeId (nome da conta) do projeto?".
+2.  **Análise de Exemplos (Mandatório)**: Antes de qualquer ação, acesse as URLs em "Referências" para ler e analisar o padrão estrutural e de código nos exemplos oficiais do GitHub.
+3.  **Planejamento**: Proponha a implementação baseada estritamente nos padrões encontrados nos exemplos.
+4.  **Consulta Técnica e Boas Práticas**:
+    - **Boas Práticas (Proativo)**: Utilize as skills de `best-practices` (ex: `vtex-io-services-best-practices`, `storefront-components-best-practices`, `faststore-best-practices`) durante a implementação para garantir padrões de nomenclatura e estrutura.
+    - **Consultoria (Reativo)**: Utilize as skills de `consultants` (ex: `vtex-api-consultant`, `faststore-consultant`) ou o guia de `TROUBLESHOOTING.md` APENAS se houver dúvidas sobre detalhes técnicos específicos que não estejam claros nos exemplos.
+5.  **Implementação**: Execute a geração do código seguindo o plano aprovado.
 
 ## Restrições de Escopo (CRÍTICO)
 
 - **NUNCA** crie ou modifique arquivos dentro das pastas `.cursor/` ou `examples/`.
 - **NUNCA** altere a configuração do toolkit ou suas regras internas.
 - Implementações exclusivas nas pastas: `react/`, `node/`, `store/`, `src/`, `cms/`.
-- Arquivos em `https://github.com/carlosviniciusananias/vtex-toolkit/tree/main/examples/` são **APENAS** para referência.
+- Arquivos em `https://github.com/carlosviniciusananias/vtex-toolkit/tree/main/examples/` e `https://github.com/vtex-sites/playground.store` são **APENAS** para referência.
 
 ## Comandos Ativos de Geração
 
 Sempre que o usuário utilizar uma das palavras-chave abaixo ou referenciar arquivos em `.cursor/commands/`, execute o workflow correspondente:
 
 ### @new-storefront-block - Geração de Blocos JSONC
-- Consultar `.cursor/commands/new-block.md` para parâmetros.
-- Seguir `storefront/blocks.mdc`.
-- Encapsular em `flex-layout.row` -> `flex-layout.col`.
+- **Comando**: `.cursor/commands/new-block.md`
+- **Regra**: `storefront/blocks.mdc`
+- **Padrão**: Encapsular em `flex-layout.row` -> `flex-layout.col`.
+- **Referências**: `https://raw.githubusercontent.com/carlosviniciusananias/vtex-toolkit/main/examples/storefront/store-theme`.
 
 ### @new-storefront-component - Geração de Componente React
-- Consultar `.cursor/commands/new-component.md` para parâmetros.
-- Seguir `storefront/frontend.mdc`.
-- Usar `useCssHandles`, `react-intl` e `StoreFrontFC`.
+- **Comando**: `.cursor/commands/new-component.md`
+- **Regra**: `storefront/frontend.mdc`
+- **Padrão**: Usar `useCssHandles`, `react-intl` e `StoreFrontFC`.
+- **Referências**: `https://raw.githubusercontent.com/carlosviniciusananias/vtex-toolkit/main/examples/storefront/custom-components`.
 
 ### @new-storefront-service - Geração de Serviço Node.js
-- Consultar `.cursor/commands/new-service.md` para parâmetros.
-- Seguir `storefront/backend.mdc`.
-- Client, Middleware, Resolvers e Configuração.
+- **Comando**: `.cursor/commands/new-service.md`
+- **Regra**: `storefront/backend.mdc`
+- **Padrão**: Client, Middleware, Resolvers e Configuração.
+- **Referências**: `https://raw.githubusercontent.com/carlosviniciusananias/vtex-toolkit/main/examples/storefront/back-end`.
 
 ### @new-faststore-cms | @new-faststore-components | @new-faststore-resolvers
-- Seguir padrões de Atomic Design, SectionOverride e GraphQL Resolvers.
-- **Mapeamento CMS (CRÍTICO)**: O nome da seção em `sections.json` deve ser idêntico ao nome do componente React, e as propriedades do schema devem corresponder às props do componente.
-- **Referências**: `https://raw.githubusercontent.com/carlosviniciusananias/vtex-toolkit/main/examples/faststore/`.
+- **Comandos**: `.cursor/commands/new-faststore-*`
+- **Padrão**: Atomic Design, SectionOverride e GraphQL Resolvers.
+- **Mapeamento CMS (CRÍTICO)**: O nome da seção em `sections.json` deve ser idêntico ao nome do componente React.
+- **Referências**: `https://raw.githubusercontent.com/carlosviniciusananias/vtex-toolkit/main/examples/faststore/` e `https://github.com/vtex-sites/playground.store`.
 
 ## Comandos de Manutenção
 
@@ -63,7 +72,7 @@ Sempre que o usuário utilizar uma das palavras-chave abaixo ou referenciar arqu
 ## Diretrizes de Comportamento
 
 - **Tom de Voz**: Puramente diretivo e técnico. Sem prolixidade.
-- **Descrição de Tarefa (OBRIGATÓRIO)**: Se o usuário enviar um comando de geração (ex: `@new-storefront-block`) sem uma descrição clara do que deseja ou sem os parâmetros necessários, o agente **NÃO DEVE** executar nenhuma ação. Em vez disso, deve solicitar educadamente uma breve descrição da tarefa.
-- **Confirmação de Intenção (CRÍTICO)**: Se a solicitação do usuário for ambígua ou se houver risco de executar um workflow complexo (ex: `@new-storefront-service`) por engano, o agente DEVE questionar o usuário antes de iniciar a geração de múltiplos arquivos.
-- **Proatividade**: Sugerir correções imediatas ao detectar erros de padrão (Self-healing).
+- **Descrição de Tarefa (OBRIGATÓRIO)**: Se o usuário enviar um comando de geração sem uma descrição clara, o agente **NÃO DEVE** executar nenhuma ação. Solicite uma breve descrição.
+- **Confirmação de Intenção (CRÍTICO)**: Se a solicitação for ambígua ou complexa (ex: `@new-storefront-service`), o agente DEVE questionar o usuário antes de iniciar.
+- **Proatividade**: Sugerir correções imediatas ao detectar erros de padrão (Self-healing) consultando `.cursor/docs/TROUBLESHOOTING.md`.
 - **Referências**: `https://raw.githubusercontent.com/carlosviniciusananias/vtex-toolkit/main/examples/` é a única fonte de verdade para estilo e estrutura.
